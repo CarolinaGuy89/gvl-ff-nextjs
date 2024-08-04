@@ -1,10 +1,10 @@
-import NavbarMenu from "./components/navbar";
+import LeagueSelect from "./components/leagueselect";
 
 export default function Home() {
   return (
 
     <main className="flex min-h-screen flex-col items-center">
-    <NavbarMenu />
+    <LeagueSelect />
       <div>
         Hello World
       </div>
