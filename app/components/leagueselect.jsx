@@ -21,11 +21,19 @@ export default function App() {
     hockey: "Full Contact Turf Hockey",
   }
 
+  const leagueValues = {
+    gvl: 1248073066,
+    it: 601844230,
+    family: 283159008,
+    hockey: 1335739020,
+  }
+
+
   // Convert the Set to an Array and get the first value.
   const selectedOptionValue = Array.from(selectedOption)[0];
 
   return (
-    <ButtonGroup variant="faded" radius="sm">
+    <ButtonGroup variant="faded" radius="sm" classname="justify-right">
       <Button className="text-slate-700">{labelsMap[selectedOptionValue]}</Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
