@@ -11,7 +11,7 @@ export default function Home() {
       </div>
       <div className="flex min-h-screen flex-col items-center">
         Hello World
-        <LeagueStandings />
+
       </div>
 
     </main>
