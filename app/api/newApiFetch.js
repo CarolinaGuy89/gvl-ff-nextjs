@@ -1,12 +1,79 @@
-export async function getLeagueStandings() {
+
+const responseMap = {
+  id: 'id',
+  abbreviation: 'abbrev',
+}
+
+
+async function getLeagueStandings() {
+
+
+  const responseMap = {
+    //newName: 'oldname'
+    id: 'id',
+    abbreviation: 'abbrev',
+    logoURL: 'logo',
+    draftDayProjectedRank: 'draftDayProjectedRank',
+    teamName: 'name',
+    regularSeasonStanding: 'playoffSeed',
+    pointsFor: 'points',
+    postSeasonRanking: 'rankCalculatedFinal',
+  };
+
+  var arr = [];
   //     console.log("<--------------API Fetch-------------->")  
-  const data = await fetch('https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/1248073066?scoringPeriodId=&view=mRoster&view=mTeam').then((res) =>
-      res.json()
-    )
-    console.log(data);
-    return data
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/1248073066?scoringPeriodId=2&view=mTeam"
+  console.log("call")
+  const rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+    res.json()
+  )
+  for (var i in rawData)
+    arr.push([i, rawData[i]])
+
+  //extract the members and teams arrays.
+  const members = arr.find(([key]) => key === "members")[1];
+  console.log("Members:", members);
+  const teams = arr.find(([key]) => key === "teams")[1];
+  console.log("Teams:", teams);
+
+  //The reduce() function creates a map of member IDs to their first names.
+  const memberMap = members.reduce((acc, member) => {
+    acc[member.id] = member.firstName;
+    return acc;
+  }, {});
+  
+  //apply the mapping to each team
+  teams.forEach((team, i) => {
+    if (memberMap[team.primaryOwner]) {
+      team.primaryOwner = memberMap[team.primaryOwner];
+    }
+    delete team.owners;
+  });
+
+const leagueData = teams.map(item => {
+  const newItem = {};
+
+  for (const newKey in responseMap) {
+    const oldKey = responseMap[newKey];
+    if (item.hasOwnProperty(oldKey)) {
+      newItem[newKey] = item[oldKey];
+    }
   }
 
+  // Add other fields that are not in the responseMap
+  for (const key in item) {
+    if (!Object.values(responseMap).includes(key)) {
+      //Uncomment to keep items not in response map
+      //newItem[key] = item[key];
+    }
+  }
+  
+  return newItem;
+});
+
+  return leagueData
+}
+getLeagueStandings();
 // export async function getLeagueStandings(leagueId){
 //     console.log("<--------------API Fetch-------------->")
 //     console.log(leagueId)

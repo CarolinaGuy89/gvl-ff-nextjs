@@ -1,6 +1,6 @@
 'use client'
 import React from "react";
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
+
 //import { getLeagueStandings } from '../../api/apiFetch'
 import { Suspense } from 'react'
 import { BuildStandings } from './leagueStandings'
