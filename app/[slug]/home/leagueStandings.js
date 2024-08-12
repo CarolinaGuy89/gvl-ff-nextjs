@@ -1,8 +1,16 @@
 // import draftData from '../../api/gvl-draft2023.json'
 import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
-import { getLeagueStandings } from "../../api/newApiFetch";
+import getLeagueStandings from "../../api/newApiFetch";
 
-export async function BuildStandings() {
+export default async function BuildStandings( {slug} ) {
+    const leagueValues = {
+        gvl: 1248073066,
+        it: 601844230,
+        family: 283159008,
+        hockey: 1335739020,
+      }
+      console.log('Received slug:', slug);
+      console.log('Received slug:', leagueValues[slug]);
     const columns = [
         {
             key: "leagueLocalRank",
@@ -30,7 +38,7 @@ export async function BuildStandings() {
         },
     ];
 
-    const leagueStandings = getLeagueStandings();
+    const leagueStandings = await getLeagueStandings(leagueValues[slug]);
 
     return (
         <b className="leagueStandingsTable" >

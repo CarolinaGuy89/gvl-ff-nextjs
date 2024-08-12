@@ -1,13 +1,13 @@
-async function getLeagueStandings() {
-  const leagueSettings = {
-    playoffQty: 6,
-    lastRegularSeasonWeek: 14
-  }
+import getLeagueSettings from './leagueConfig'
+export default async function getLeagueStandings(leagueId) {
+
+  const leagueSettings = getLeagueSettings(leagueId);
+  console.log("leagueSettings.playoffQty", leagueSettings.playoffQty)
+  console.log("leagueSettings.lastRegularSeasonWeek", leagueSettings.lastRegularSeasonWeek)
 
   var arr = [];
-  const leagueId = 1248073066;
   const weekNum = 17;
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
   const responseMap = {
     //newName: 'oldname'
     id: 'id',
@@ -41,9 +41,9 @@ async function getLeagueStandings() {
 
   //Extract the members and teams arrays.
   const members = arr.find(([key]) => key === "members")[1];
-  console.log("Members:", members);
+  //console.log("Members:", members);
   const teams = arr.find(([key]) => key === "teams")[1];
-  console.log("Teams:", teams);
+  //console.log("Teams:", teams);
 
   //The reduce() function creates a map of member IDs to their first names.
   const memberMap = members.reduce((acc, member) => {
@@ -56,9 +56,6 @@ async function getLeagueStandings() {
     if (memberMap[team.primaryOwner]) {
       team.primaryOwner = memberMap[team.primaryOwner];
     }
-    // delete team.owners;
-    // team = { ...team, ...team.record.overall }
-    // delete team.record
   });
   
   //apply the responseMap to each team
@@ -75,6 +72,8 @@ async function getLeagueStandings() {
     }
     newItem.winPercentage = newItem.winPercentage*100
     newItem.leagueLocalRank = newItem.regularSeasonStanding
+    newItem.pointsAgainst = newItem.pointsAgainst.toFixed(2)
+    newItem.pointsFor = newItem.pointsFor.toFixed(2)
     //if current week is > last regular season week
 
     // Add other fields that are not in the responseMap, Uncomment to keep items not in response map
@@ -97,7 +96,8 @@ async function getLeagueStandings() {
     });
   }
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
-  return leagueData
+  return (leagueData)
+  
 }
 //local js testing only
 //getLeagueStandings();
