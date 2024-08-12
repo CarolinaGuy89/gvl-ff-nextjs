@@ -1,5 +1,3 @@
-
-
 async function getLeagueStandings() {
   const leagueSettings = {
     playoffQty: 6,
@@ -101,4 +99,5 @@ async function getLeagueStandings() {
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
   return leagueData
 }
-getLeagueStandings();
+//local js testing only
+//getLeagueStandings();
