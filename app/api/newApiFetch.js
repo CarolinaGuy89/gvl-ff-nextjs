@@ -7,7 +7,7 @@ export default async function getLeagueStandings(leagueId) {
 
   var arr = [];
   const weekNum = 17;
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
   const responseMap = {
     //newName: 'oldname'
     id: 'id',
@@ -101,3 +101,54 @@ export default async function getLeagueStandings(leagueId) {
 }
 //local js testing only
 //getLeagueStandings();
+
+// export const getDraftData = async (leagueId) => {
+//   const api_url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/" + leagueId + "?view=mDraftDetail";
+//   //Draft data via direct from source
+//   async function getapi(url) {
+//       const response = await fetch(url);
+//       // Storing data in form of JSON
+//       return await response.json().then(data => {
+//           return data;
+//       })
+//   }
+//   var draftRaw = await getapi(api_url)
+  
+//   const draftData = {
+//       draftPicks: draftRaw.draftDetail.picks,
+//       leagueId: draftRaw.id,
+//       pickOrder: draftRaw.settings.draftSettings.pickOrder
+//   }
+  
+//   draftData.draftPicks.forEach(p => {
+//       delete p.autoDraftTypeId
+//       delete p.nominatingTeamId
+//       delete p.bidAmount
+//       delete p.id
+//       delete p.memberId
+//       delete p.tradeLocked
+//   });
+  
+//   const regroupPicks = {};
+//   draftData.draftPicks.forEach((item) => {
+//       if (!regroupPicks[item.teamId]) {
+//         regroupPicks[item.teamId] = [];
+//       }
+//       regroupPicks[item.teamId].push(item);
+//     });
+    
+//     // Convert the grouped object back to an array
+//     const d = Object.values(regroupPicks);
+    
+//     // Sort newArray based on pickOrder
+//   d.sort((a, b) => {
+//       const aTeamId = a[0].teamId;
+//       const bTeamId = b[0].teamId;
+//       return draftData.pickOrder.indexOf(aTeamId) - draftData.pickOrder.indexOf(bTeamId);
+//     });
+  
+//   draftData.draftPicks = d;
+//   console.log(draftData)
+  
+//   return draftData
+// }
