@@ -1,13 +1,15 @@
 
-const responseMap = {
-  id: 'id',
-  abbreviation: 'abbrev',
-}
-
 
 async function getLeagueStandings() {
+  const leagueSettings = {
+    playoffQty: 6,
+    lastRegularSeasonWeek: 14
+  }
 
-
+  var arr = [];
+  const leagueId = 1248073066;
+  const weekNum = 17;
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
   const responseMap = {
     //newName: 'oldname'
     id: 'id',
@@ -16,21 +18,30 @@ async function getLeagueStandings() {
     draftDayProjectedRank: 'draftDayProjectedRank',
     teamName: 'name',
     regularSeasonStanding: 'playoffSeed',
-    pointsFor: 'points',
     postSeasonRanking: 'rankCalculatedFinal',
+    pointsAgainst: 'pointsAgainst',
+    pointsFor: 'points',
+    wins: 'wins',
+    losses: 'losses',
+    streakLength: 'streakLength',
+    streakType: 'streakType',
+    owner: 'primaryOwner',
+    winPercentage: 'percentage',
+    preSeasonRank: 'draftDayProjectedRank',
+    currentProjectedRank: 'currentProjectedRank',
+    gamesBack: 'gamesBack',
   };
 
-  var arr = [];
-  //     console.log("<--------------API Fetch-------------->")  
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/1248073066?scoringPeriodId=2&view=mTeam"
-  console.log("call")
+  //fetch data, caching it.
   const rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
     res.json()
   )
+
+  //convert objects into an array
   for (var i in rawData)
     arr.push([i, rawData[i]])
 
-  //extract the members and teams arrays.
+  //Extract the members and teams arrays.
   const members = arr.find(([key]) => key === "members")[1];
   console.log("Members:", members);
   const teams = arr.find(([key]) => key === "teams")[1];
@@ -41,226 +52,53 @@ async function getLeagueStandings() {
     acc[member.id] = member.firstName;
     return acc;
   }, {});
-  
-  //apply the mapping to each team
+
+  //apply the memberMap to each team
   teams.forEach((team, i) => {
     if (memberMap[team.primaryOwner]) {
       team.primaryOwner = memberMap[team.primaryOwner];
     }
-    delete team.owners;
+    // delete team.owners;
+    // team = { ...team, ...team.record.overall }
+    // delete team.record
+  });
+  
+  //apply the responseMap to each team
+  const leagueData = teams.map(item => {
+    const newItem = {};
+
+    item = { ...item, ...item.record.overall }
+
+    for (const newKey in responseMap) {
+      const oldKey = responseMap[newKey];
+      if (item.hasOwnProperty(oldKey)) {
+        newItem[newKey] = item[oldKey];
+      }
+    }
+    newItem.winPercentage = newItem.winPercentage*100
+    newItem.leagueLocalRank = newItem.regularSeasonStanding
+    //if current week is > last regular season week
+
+    // Add other fields that are not in the responseMap, Uncomment to keep items not in response map
+    // for (const key in item) {
+    //   if (!Object.values(responseMap).includes(key)) {
+    //     newItem[key] = item[key];
+    //   }
+    // }
+
+    return newItem;
   });
 
-const leagueData = teams.map(item => {
-  const newItem = {};
-
-  for (const newKey in responseMap) {
-    const oldKey = responseMap[newKey];
-    if (item.hasOwnProperty(oldKey)) {
-      newItem[newKey] = item[oldKey];
-    }
+  if (weekNum > leagueSettings.lastRegularSeasonWeek) {
+    leagueData.forEach(t => {
+      if (t.leagueLocalRank > leagueSettings.playoffQty) {
+        t.leagueLocalRank = t.regularSeasonStanding
+      } else {
+        t.leagueLocalRank = t.postSeasonRanking
+      }
+    });
   }
-
-  // Add other fields that are not in the responseMap
-  for (const key in item) {
-    if (!Object.values(responseMap).includes(key)) {
-      //Uncomment to keep items not in response map
-      //newItem[key] = item[key];
-    }
-  }
-  
-  return newItem;
-});
-
+  leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
   return leagueData
 }
 getLeagueStandings();
-// export async function getLeagueStandings(leagueId){
-//     console.log("<--------------API Fetch-------------->")
-//     console.log(leagueId)
-//     const testData = await fetch (`https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/1248073066?scoringPeriodId=&view=mRoster&view=mTeam`, { cache: 'force-cache' })
-//     console.log(testData);
-//     const leagueStandings = [
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 1,
-//             "abbreviation": "MrBB",
-//             "name": "Mr. Boom/Bust-ic",
-//             "ownerName": "Sam Murry",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/ffl/SmackTalk-LeoEspinosa/Boom-10.svg",
-//             "wins": 7,
-//             "losses": 7,
-//             "ties": 0,
-//             "totalPointsScored": 1586.76,
-//             "regularSeasonPointsFor": 1586.76,
-//             "regularSeasonPointsAgainst": 1681.44,
-//             "winningPercentage": 50,
-//             "playoffSeed": 7,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 2,
-//             "abbreviation": "TIB",
-//             "name": "To Infinity and Bijan",
-//             "ownerName": "Alex Cooper",
-//             "logoURL": "https://www.pngkit.com/png/detail/214-2140315_buzz-flying-flying-buzz-lightyear-png.png",
-//             "wins": 8,
-//             "losses": 6,
-//             "ties": 0,
-//             "totalPointsScored": 1729.02,
-//             "regularSeasonPointsFor": 1729.02,
-//             "regularSeasonPointsAgainst": 1635.5799999999997,
-//             "winningPercentage": 57.14,
-//             "playoffSeed": 2,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 3,
-//             "abbreviation": "??",
-//             "name": "shrug emoji",
-//             "ownerName": "Arthur Simmons",
-//             "logoURL": "https://media.tenor.com/rUa8MTSuXFEAAAAC/who-cares.gif",
-//             "wins": 8,
-//             "losses": 6,
-//             "ties": 0,
-//             "totalPointsScored": 1734.24,
-//             "regularSeasonPointsFor": 1734.24,
-//             "regularSeasonPointsAgainst": 1616.74,
-//             "winningPercentage": 57.14,
-//             "playoffSeed": 4,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 4,
-//             "abbreviation": "MCCA",
-//             "name": "Priesthood of Amon Ra",
-//             "ownerName": "Matt McCarthy",
-//             "logoURL": "https://st2.depositphotos.com/1028735/47228/v/1600/depositphotos_472284648-stock-illustration-animation-color-portrait-ancient-egyptian.jpg",
-//             "wins": 8,
-//             "losses": 6,
-//             "ties": 0,
-//             "totalPointsScored": 1618.86,
-//             "regularSeasonPointsFor": 1618.86,
-//             "regularSeasonPointsAgainst": 1676.56,
-//             "winningPercentage": 57.14,
-//             "playoffSeed": 5,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 5,
-//             "abbreviation": "MR-S",
-//             "name": "Mr. Schnitzel",
-//             "ownerName": "Ryan Lambert",
-//             "logoURL": "https://pbs.twimg.com/profile_images/1183182627534188548/XfEs405J_400x400.jpg",
-//             "wins": 10,
-//             "losses": 4,
-//             "ties": 0,
-//             "totalPointsScored": 1985.7399999999998,
-//             "regularSeasonPointsFor": 1985.7399999999998,
-//             "regularSeasonPointsAgainst": 1675.6999999999998,
-//             "winningPercentage": 71.43,
-//             "playoffSeed": 1,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 6,
-//             "abbreviation": "Arrg",
-//             "name": "Thielen your Money",
-//             "ownerName": "Steven Cruise",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/ffl/BoneHeads-ToddDetwiler/BoneHeads-08b.svg",
-//             "wins": 6,
-//             "losses": 8,
-//             "ties": 0,
-//             "totalPointsScored": 1653.0000000000002,
-//             "regularSeasonPointsFor": 1653.0000000000002,
-//             "regularSeasonPointsAgainst": 1810.5800000000002,
-//             "winningPercentage": 42.86,
-//             "playoffSeed": 8,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 7,
-//             "abbreviation": "EUBA",
-//             "name": "Insert Name Change",
-//             "ownerName": "Cody Eubanks",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/core/StadiumFoods-ESPN/stadium-foods_hot-dog.svg",
-//             "wins": 4,
-//             "losses": 10,
-//             "ties": 0,
-//             "totalPointsScored": 1633.0799999999997,
-//             "regularSeasonPointsFor": 1633.0799999999997,
-//             "regularSeasonPointsAgainst": 1795.34,
-//             "winningPercentage": 28.57,
-//             "playoffSeed": 9,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 8,
-//             "abbreviation": "BONn",
-//             "name": "Simpsonville CreativeMascots",
-//             "ownerName": "Cale Bonner",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/core/AnimalHeads/animal_heads-15.svg",
-//             "wins": 7,
-//             "losses": 7,
-//             "ties": 0,
-//             "totalPointsScored": 1670.7399999999998,
-//             "regularSeasonPointsFor": 1670.7399999999998,
-//             "regularSeasonPointsAgainst": 1719.3000000000002,
-//             "winningPercentage": 50,
-//             "playoffSeed": 6,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 9,
-//             "abbreviation": "KYW3",
-//             "name": "Rise of Ky Walker pt 3",
-//             "ownerName": "Marty Wyss",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/core/Solo/ESPN_Star_Wars_Mil_Falcon-01.svg",
-//             "wins": 9,
-//             "losses": 5,
-//             "ties": 0,
-//             "totalPointsScored": 1884.7200000000003,
-//             "regularSeasonPointsFor": 1884.7200000000003,
-//             "regularSeasonPointsAgainst": 1752.5400000000002,
-//             "winningPercentage": 64.29,
-//             "playoffSeed": 3,
-//             "owner": "name"
-//         },
-//         {
-//             "leagueId": 1248073066,
-//             "seasonId": 2023,
-//             "id": 10,
-//             "abbreviation": "CaSh",
-//             "name": "The Caddy Shack",
-//             "ownerName": "Russ Corwin",
-//             "logoURL": "https://g.espncdn.com/lm-static/logo-packs/ffl/CrazyHelmets-ToddDetwiler/Helmets_05.svg",
-//             "wins": 3,
-//             "losses": 11,
-//             "ties": 0,
-//             "totalPointsScored": 1450.78,
-//             "regularSeasonPointsFor": 1450.78,
-//             "regularSeasonPointsAgainst": 1583.16,
-//             "winningPercentage": 21.43,
-//             "playoffSeed": 10,
-//             "owner": "name"
-//         }
-//       ]
-//       console.log(leagueStandings);
-//     return (leagueStandings)
-// };
