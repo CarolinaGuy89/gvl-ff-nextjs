@@ -4,9 +4,7 @@ import {Button, ButtonGroup, Dropdown, DropdownTrigger, DropdownMenu, DropdownIt
 import {ChevronDownIcon} from './ChevronDownIcon';
 
 export default function App() {
-  const [selectedOption, setSelectedOption] = useState(new Set(["gvl"]));
-
-
+  const [selectedOption, setSelectedOption] = useState("gvl");
 
   const labelsMap = {
     gvl: "G-Vegas",
@@ -15,19 +13,12 @@ export default function App() {
     hockey: "Full Contact Turf Hockey",
   }
 
-  // const leagueValues = {
-  //   gvl: 1248073066,
-  //   it: 601844230,
-  //   family: 283159008,
-  //   hockey: 1335739020
-  // }
-  // Convert the Set to an Array and get the first value.
   const selectedOptionValue = Array.from(selectedOption)[0];
-
+console.log(selectedOption)
   return (
     <body>
-    <ButtonGroup variant="faded" radius="sm" className="justify-center">
-      <Button className="text-slate-700">{labelsMap[selectedOptionValue]}</Button>
+    <ButtonGroup variant="faded" radius="sm" className="absolute top-0 right-0 h-16">
+      <Button className="text-slate-700">{labelsMap[selectedOption]}</Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Button isIconOnly>
@@ -36,22 +27,22 @@ export default function App() {
         </DropdownTrigger>
         <DropdownMenu
           disallowEmptySelection
-          aria-label="Merge options"
-          selectedKeys={selectedOption}
+          aria-label="Select a League"
+          selectedKeys={labelsMap.selectedOption}
           selectionMode="single"
-          onSelectionChange={setSelectedOption}
+          onSelectionChange={new Set([setSelectedOption])}
           className="max-w-[300px] text-slate-700"
         >
-          <DropdownItem key="gvl" href="/gvl/home" /*description={descriptionsMap["merge"]}*/>
+          <DropdownItem key="gvl" href="/gvl/home">
             {labelsMap["gvl"]}
           </DropdownItem>
-          <DropdownItem key="it" href="/it/home"/*description={descriptionsMap["squash"]}*/>
+          <DropdownItem key="it" href="/it/home">
             {labelsMap["it"]}
           </DropdownItem>
-          <DropdownItem key="family" href="/family/home"/*description={descriptionsMap["rebase"]}*/>
+          <DropdownItem key="family" href="/family/home">
             {labelsMap["family"]}
           </DropdownItem>
-          <DropdownItem key="hockey" href="/hockey/home" /*description={descriptionsMap["rebase"]}*/>
+          <DropdownItem key="hockey" href="/hockey/home">
             {labelsMap["hockey"]}
           </DropdownItem>
         </DropdownMenu>
