@@ -10,23 +10,16 @@
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --foreground-rgb: 255, 255, 255;
+    /* --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0; */
+    background-image: url('../public/background.jpg');
+    background-size: cover;
+    background-position: bottom right 25%;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    color: whitesmoke;
   }
-}
-
-body {
-  background-image: url('../public/background.jpg');
-  background-color: var(--bg);
-  background-blend-mode: multiply;
-  background-size: cover;
-  background-position: bottom right 25%;
-  background-repeat: no-repeat;
-  background-attachment: fixed;
-  font-size: 16px;
-  font-family:"Gill Sans", sans-serif;
-  color: whitesmoke;
 }
 
 @layer utilities {
