@@ -17,8 +17,8 @@ export default function App() {
 console.log(selectedOption)
   return (
     <body>
-    <ButtonGroup variant="faded" radius="sm" className="absolute top-0 right-0 h-16">
-      <Button className="text-slate-700">{labelsMap[selectedOption]}</Button>
+    <ButtonGroup variant="solid" radius="lg" className="absolute top-0 right-0 h-16">
+      <Button className="text-slate-300">{labelsMap[selectedOption]}</Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
           <Button isIconOnly>
@@ -31,7 +31,7 @@ console.log(selectedOption)
           selectedKeys={labelsMap.selectedOption}
           selectionMode="single"
           onSelectionChange={new Set([setSelectedOption])}
-          className="max-w-[300px] text-slate-700"
+          className="max-w-[300px]"
         >
           <DropdownItem key="gvl" href="/gvl/home">
             {labelsMap["gvl"]}

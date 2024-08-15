@@ -43,7 +43,7 @@ export default async function getLeagueStandings(leagueId) {
   const members = arr.find(([key]) => key === "members")[1];
   //console.log("Members:", members);
   const teams = arr.find(([key]) => key === "teams")[1];
-  console.log("Teams:", teams);
+  //console.log("Teams:", teams);
 
   //The reduce() function creates a map of member IDs to their first names.
   const memberMap = members.reduce((acc, member) => {

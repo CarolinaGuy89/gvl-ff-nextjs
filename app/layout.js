@@ -12,11 +12,11 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en" className="bg-gradient-to-r from-cyan-500 to-blue-500">
+    <html lang="en">
         <body className={inter.className}>
           {children}
         </body>
-        {/* <LeagueSelect /> */}
+        {<LeagueSelect />}
     </html>
   );
 }

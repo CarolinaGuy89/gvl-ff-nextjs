@@ -41,67 +41,47 @@ export default async function BuildStandings({ slug }) {
     ];
 
     // Define the headers array
-const tableHeaders = [
-    'Rank',
-    'GM',
-    'Team Name',
-    'Record',
-    'PF',
-    //  'PA', 
-    //  '∆', 
-];
+    const tableHeaders = [
+        'Rank',
+        'GM',
+        'Team Name',
+        'Record',
+        'PF',
+    ];
 
     const leagueStandings = await getLeagueStandings(leagueValues[slug]);
     const s = getLeagueSettings(leagueValues[slug]);
-    
+
     const transformedStandings = leagueStandings.map((t) => ({
         ...t,
         rowData: [
             t.leagueLocalRank,
             t.owner,
             t.teamName,
-           `${t.wins} - ${t.losses}`,
+            `${t.wins} - ${t.losses}`,
             t.pointsFor,
-            //  t.pointsAgainst, 
-            // `${(t.pointsFor - t.pointsAgainst).toFixed(2)}` 
         ],
     }));
 
     return (
-        <section>
-            <table className='text-sm ring-2 mx-2 rounded-lg ring-slate-400 text-left'>
-                <thead className='ring-2 ring-white'>
-                    <tr className="">
+        <table className='text-sm ring-2 rounded-lg ring-slate-300'>
+            <thead>
+                <tr className="">
                     {tableHeaders.map((header, idx) => (
                         <th key={idx}
-                        className="bg-black/55">{header}</th>
+                            className="rounded-lg bg-black/55">{header}</th>
                     ))}
-                    </tr>
-                </thead>
-                <tbody className="bg-black/35 space-x-0.5"> 
+                </tr>
+            </thead>
+            <tbody className="bg-black/35 rounded-lg">
                 {transformedStandings.map((t) => (
                     <tr key={t.id}>
                         {t.rowData.map((data, idx) => (
-                            <td key={idx}>{data}</td>
+                            <td key={idx} className="py-1">{data}</td>
                         ))}
                     </tr>
                 ))}
-                </tbody>
-            </table>
-            </section>
-            )
-            }
-
-
-
-            // .leagueStandings {
-            //     background-color: rgba(255, 255, 255, .6);
-            //     border-radius: 10px;
-            //     padding: 10px;
-            //     margin: 0.5rem;
-            //     box-shadow: .25rem .25rem .5rem .5rem #00000090;
-            //     color:black;
-            //     width: calc(100vw - 1rem);
-            //     text-align: center;
-                
-            //   }
+            </tbody>
+        </table>
+    )
+}
