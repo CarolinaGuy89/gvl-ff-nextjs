@@ -1,13 +1,11 @@
 'use client'
-import LeagueSelect from "./components/leagueselect";
-import LeagueStandings from "./components/LeagueStandings";
 
-export default function Home() {
+export default function Home({ params }) {
   return (
 
     <main>
-      <div className="flex min-h-screen flex-col items-center">
-        Hello World
+      <div>
+        Hello World: {params.slug}
 
       </div>
 
