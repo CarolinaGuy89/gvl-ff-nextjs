@@ -64,20 +64,19 @@ export default async function BuildStandings({ slug }) {
     }));
 
     return (
-        <table className='text-sm ring-2 rounded-lg ring-slate-300'>
+        <table>
             <thead>
-                <tr className="">
+                <tr>
                     {tableHeaders.map((header, idx) => (
-                        <th key={idx}
-                            className="rounded-lg bg-black/55">{header}</th>
+                        <th key={idx}>{header}</th>
                     ))}
                 </tr>
             </thead>
-            <tbody className="bg-black/35 rounded-lg">
+            <tbody>
                 {transformedStandings.map((t) => (
                     <tr key={t.id}>
                         {t.rowData.map((data, idx) => (
-                            <td key={idx} className="py-1">{data}</td>
+                            <td key={idx}>{data}</td>
                         ))}
                     </tr>
                 ))}

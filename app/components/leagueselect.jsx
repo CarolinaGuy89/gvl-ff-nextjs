@@ -17,7 +17,7 @@ export default function App() {
 console.log(selectedOption)
   return (
     <body>
-    <ButtonGroup variant="solid" radius="lg" className="absolute top-0 right-0 h-16">
+    <ButtonGroup variant="solid" radius="lg">
       <Button className="text-slate-300">{labelsMap[selectedOption]}</Button>
       <Dropdown placement="bottom-end">
         <DropdownTrigger>
