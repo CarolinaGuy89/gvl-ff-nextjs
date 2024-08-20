@@ -5,4 +5,66 @@
   background-repeat: no-repeat;
   background-attachment: fixed;
   color: whitesmoke;
+  font-family: Arial, Helvetica, sans-serif;
 }
+
+h1 {
+  font-size: 28px;
+  margin-bottom: 0%;
+}
+
+h2 {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.chartTitle {
+  text-align: center;
+}
+
+h6 {
+  margin-top: 5px;
+  margin-bottom: 0%;
+}
+
+table {
+  background-color: rgba(0, 0, 0, 0.45);
+  border-collapse: collapse;
+  border: solid whitesmoke;
+
+}
+
+thead {
+    background-color: rgba(0, 0, 0, 0.55);
+
+}
+
+th {
+  padding: 5px;
+}
+
+tr {
+  padding: 5px;
+  text-align: center;
+  border-bottom: groove rgba(245, 245, 245, 0.247)
+}
+
+/* .homePageLinks {
+  margin: 20px;
+  display: grid;
+  grid: repeat(2, 6rem) / auto-flow 180px;
+  column-gap: 20px;
+  row-gap: 20px;
+  text-align: center;
+}
+
+.homePageLinks a {
+  background-color: rgba(255, 255, 255, .6);
+  border-radius: 5px;
+  padding: 10px;
+  margin: 1rem 5rem 1rem 5rem;
+  box-shadow: .5rem .5rem .5rem #00000090;
+  color:black;
+  width: 10rem;
+} */

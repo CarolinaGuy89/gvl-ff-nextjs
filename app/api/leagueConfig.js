@@ -1,5 +1,5 @@
 
-export default function getLeagueSettings(leagueId) {
+export default async function getLeagueSettings(leagueId) {
     switch (leagueId) {
         //GVL
         case 1248073066:
@@ -32,3 +32,4 @@ export default function getLeagueSettings(leagueId) {
     };
     return (leagueSettings)
 }
+

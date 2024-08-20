@@ -1,14 +1,27 @@
+//use this for npm run dev
 import getLeagueSettings from './leagueConfig'
-export default async function getLeagueStandings(leagueId) {
+import { slotCategoryIdToPositionMap } from '../components/constants'
 
-  const leagueSettings = getLeagueSettings(leagueId);
-  console.log("leagueSettings.playoffQty", leagueSettings.playoffQty)
-  console.log("leagueSettings.lastRegularSeasonWeek", leagueSettings.lastRegularSeasonWeek)
+export default async function getLeagueStandings(leagueId) {
+const leagueSettings = await getLeagueSettings(leagueId);
+
+//Local Testing only
+// async function getLeagueStandings(leagueId = 1248073066) {
+//  const leagueSettings = {
+//     playoffQty: 6,
+//     lastRegularSeasonWeek: 14
+// }
+
+//end local testing
+
+
+  //console.log("leagueSettings.playoffQty", leagueSettings.playoffQty)
+ //console.log("leagueSettings.lastRegularSeasonWeek", leagueSettings.lastRegularSeasonWeek)
 
   var arr = [];
   const weekNum = 17;
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mTeam"
-  const responseMap = {
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mRoster&view=mTeam"
+  let responseMap = {
     //newName: 'oldname'
     id: 'id',
     abbreviation: 'abbrev',
@@ -42,7 +55,7 @@ export default async function getLeagueStandings(leagueId) {
   //Extract the members and teams arrays.
   const members = arr.find(([key]) => key === "members")[1];
   //console.log("Members:", members);
-  const teams = arr.find(([key]) => key === "teams")[1];
+  let teams = arr.find(([key]) => key === "teams")[1];
   //console.log("Teams:", teams);
 
   //The reduce() function creates a map of member IDs to their first names.
@@ -57,7 +70,11 @@ export default async function getLeagueStandings(leagueId) {
       team.primaryOwner = memberMap[team.primaryOwner];
     }
   });
-  
+
+  //parse rosters for just the good stuff
+  teams = parseRoster(teams, weekNum);
+  //console.log("Teams w/ parsed roster:", teams);
+
   //apply the responseMap to each team
   const leagueData = teams.map(item => {
     const newItem = {};
@@ -72,8 +89,8 @@ export default async function getLeagueStandings(leagueId) {
     }
     newItem.winPercentage = newItem.winPercentage*100
     newItem.leagueLocalRank = newItem.regularSeasonStanding
-    newItem.pointsAgainst = newItem.pointsAgainst.toFixed(2)
-    newItem.pointsFor = newItem.pointsFor.toFixed(2)
+    newItem.pointsAgainst = newItem.pointsAgainst.toFixed(0)
+    newItem.pointsFor = newItem.pointsFor.toFixed(0)
     //if current week is > last regular season week
 
     // Add other fields that are not in the responseMap, Uncomment to keep items not in response map
@@ -85,6 +102,8 @@ export default async function getLeagueStandings(leagueId) {
 
     return newItem;
   });
+
+
 
   if (weekNum > leagueSettings.lastRegularSeasonWeek) {
     leagueData.forEach(t => {
@@ -100,55 +119,38 @@ export default async function getLeagueStandings(leagueId) {
   
 }
 //local js testing only
-//getLeagueStandings();
+getLeagueStandings();
 
-// export const getDraftData = async (leagueId) => {
-//   const api_url = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/" + leagueId + "?view=mDraftDetail";
-//   //Draft data via direct from source
-//   async function getapi(url) {
-//       const response = await fetch(url);
-//       // Storing data in form of JSON
-//       return await response.json().then(data => {
-//           return data;
-//       })
-//   }
-//   var draftRaw = await getapi(api_url)
-  
-//   const draftData = {
-//       draftPicks: draftRaw.draftDetail.picks,
-//       leagueId: draftRaw.id,
-//       pickOrder: draftRaw.settings.draftSettings.pickOrder
-//   }
-  
-//   draftData.draftPicks.forEach(p => {
-//       delete p.autoDraftTypeId
-//       delete p.nominatingTeamId
-//       delete p.bidAmount
-//       delete p.id
-//       delete p.memberId
-//       delete p.tradeLocked
-//   });
-  
-//   const regroupPicks = {};
-//   draftData.draftPicks.forEach((item) => {
-//       if (!regroupPicks[item.teamId]) {
-//         regroupPicks[item.teamId] = [];
-//       }
-//       regroupPicks[item.teamId].push(item);
-//     });
-    
-//     // Convert the grouped object back to an array
-//     const d = Object.values(regroupPicks);
-    
-//     // Sort newArray based on pickOrder
-//   d.sort((a, b) => {
-//       const aTeamId = a[0].teamId;
-//       const bTeamId = b[0].teamId;
-//       return draftData.pickOrder.indexOf(aTeamId) - draftData.pickOrder.indexOf(bTeamId);
-//     });
-  
-//   draftData.draftPicks = d;
-//   console.log(draftData)
-  
-//   return draftData
-// }
+function parseRoster(teams, weekNum) {
+
+  let parsedRoster = teams.map(item => ({
+    ...item,
+      roster: item.roster.entries.map(p => ({
+        //newName: oldLocation.oldName
+        lineupSlotId: p.lineupSlotId,
+        playerId: p.playerId,
+        defaultPositionId: p.playerPoolEntry.player.defaultPositionId,
+        eligibleSlots: p.playerPoolEntry.player.eligibleSlots.map(
+            position => slotCategoryIdToPositionMap[position]
+        ),
+        playerId: p.playerPoolEntry.player.id,
+        firstName: p.playerPoolEntry.player.firstName,
+        fullName: p.playerPoolEntry.player.fullName,
+        lastName: p.playerPoolEntry.player.lastName,
+        isInjured: p.playerPoolEntry.player.injured,
+        injuryStatus: p.playerPoolEntry.player.injuryStatus,
+        proTeamId: p.playerPoolEntry.player.proTeamId,
+        droppable: p.playerPoolEntry.player.droppable,
+        isInjured:  p.playerPoolEntry.player.injured,
+        projectedTotal: p.playerPoolEntry.player.stats
+            .flatMap(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 1) {
+                return {projectedTotal: s.appliedTotal}}}),
+        actualTotal: p.playerPoolEntry.player.stats
+            .flatMap(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 0) {
+                return {actualTotal: s.appliedTotal}}})
+
+      })) // You have to rename it separately in nested objects
+  }));
+
+  return parsedRoster
+}

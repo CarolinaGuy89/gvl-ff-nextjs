@@ -15,24 +15,21 @@ export default function LeagueOverview({ params }) {
   return (
     <main>
       <section>
-        {labelsMap[params.slug]}<br />
-        <p className="text-xs">Fantasy Football stats</p>
+        <h1>{labelsMap[params.slug]}<br /></h1>
+        <h6>Fantasy Football stats</h6>
+      </section>
+
+      <hr />
+
+      <section>
+        <h2 className="chartTitle">Current League Standings</h2>
       </section>
 
       <section>
-        Future button
-      </section >
-
-      <section>
-        <h1>Current League Standings</h1>
-      </section>
-
-      <section>
-        <Suspense fallback={<p>Undergoing officals review...</p>}>
+        <Suspense fallback={<h2 className="chartTitle">Undergoing officals review...</h2>}>
           <BuildStandings slug={params.slug} />
         </Suspense>
       </section>
-      {/* <LeagueStandings /> */}
     </main>
   )
 }
