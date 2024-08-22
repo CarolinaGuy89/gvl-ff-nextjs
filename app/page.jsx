@@ -8,54 +8,59 @@ export default function Home({ params }) {
   return (
 
     <main>
-      <div>
       <section>
         <h1>Choose your league below:<br /></h1>
         <h6>Fantasy Football stats</h6>
       </section>
-      <section>
-      <div><Link href="gvl/home"><h4>G-Vegas</h4></Link>
+      <section className="selectLeague">
+      <Link href="gvl/home">
+      <div className="leagueCard"><h4>{<br/>}G-Vegas</h4>
       <Image
           src="/gvl.svg"
           alt="Next.js Logo"
-          width={180}
-          height={50}
+          width={120}
+          height={100}
           priority
         />
       </div>
+      </Link>
       
-      <div><Link href="family/home"><h4>League of Family Drama</h4></Link>
+      <Link href="family/home">
+      <div className="leagueCard"><h4>League of {<br/>}Family Drama</h4>
       <Image
           src="/family.svg"
           alt="Next.js Logo"
-          width={180}
-          height={50}
+          width={120}
+          height={100}
           priority
         />
       </div>
+      </Link>
 
-      <div><Link href="it/home"><h4>Logistically, IT's complicated</h4></Link>
+      <Link href="it/home">
+      <div className="leagueCard"><h4>Logistically, IT's {<br/>}complicated</h4>
       <Image
           src="/computer.svg"
           alt="Next.js Logo"
-          width={180}
-          height={50}
+          width={120}
+          height={100}
           priority
         />
       </div>
+      </Link>
       
-      <div><Link href="hockey/home"><h4>Full Contact Turf Hockey</h4></Link>
+      <Link href="hockey/home">
+      <div className="leagueCard"><h4>Full Contact {<br/>}Turf Hockey</h4>
       <Image
           src="/hockey.svg"
           alt="Next.js Logo"
-          width={180}
-          height={50}
+          width={120}
+          height={100}
           priority
         />
         </div>
+        </Link>
       </section>
-      </div>
-
     </main>
   );
 }

@@ -6,7 +6,7 @@ export default function Home({ params }) {
     <main>
       <div>
         Hello World: {params.slug} <br/>
-        Matchup
+        import Boxscores Only
 
       </div>
 
