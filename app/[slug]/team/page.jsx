@@ -28,7 +28,7 @@ export default function Home({ params }) {
       </section>
 
       <section className="chartTeamPreformance">
-
+      <p>If you see this, it's working. coming soon.</p>
       </section>
     </main>
   );
