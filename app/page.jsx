@@ -41,7 +41,7 @@ export default function Home({ params }) {
 
         <Link href="it/home">
           <div className="leagueCard">
-            <h4>Logistically, IT's{<br />}complicated</h4>
+            <h4>Logistically, IT&apos;s{<br />}complicated</h4>
             <Image
               src="/computer.svg"
               alt="Next.js Logo"

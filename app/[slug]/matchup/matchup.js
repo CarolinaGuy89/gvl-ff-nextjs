@@ -262,13 +262,13 @@ export default async function BuildMatchups({ slug }) {
                 <Bar dataKey="homeScore" activeBar={<Rectangle fill="pink" stroke="blue" />}>
                 <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
                     {weekData.map((entry) => (
-                        <Cell fill={entry.barColorHome} />
+                        <Cell key={`home-${index}`} fill={entry.barColorHome} />
                     ))}
                 </Bar>
                 <Bar dataKey="awayScore">
                     <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
                     {weekData.map((entry) => (
-                        <Cell fill={entry.barColorAway}  />
+                        <Cell key={`home-${index}`} fill={entry.barColorAway}  />
                     ))}
                 </Bar>
                 <YAxis fill="white"/>
