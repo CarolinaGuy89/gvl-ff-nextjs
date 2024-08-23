@@ -20,7 +20,15 @@ const leagueSettings = await getLeagueSettings(leagueId);
 
   var arr = [];
   const weekNum = 17;
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mRoster&view=mTeam"
+  let rawData = []
+  if (Number.isInteger(leagueId)) {
+    const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mRoster&view=mTeam"
+    //fetch data, caching it.
+    rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+      res.json()
+    )
+  }
+
   let responseMap = {
     //newName: 'oldname'
     id: 'id',
@@ -43,10 +51,6 @@ const leagueSettings = await getLeagueSettings(leagueId);
     gamesBack: 'gamesBack',
   };
 
-  //fetch data, caching it.
-  const rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
-    res.json()
-  )
 
   //convert objects into an array
   for (var i in rawData)
@@ -66,9 +70,7 @@ const leagueSettings = await getLeagueSettings(leagueId);
 
   //apply the memberMap to each team
   teams.forEach((team, i) => {
-    if (memberMap[team.primaryOwner]) {
-      team.primaryOwner = memberMap[team.primaryOwner];
-    }
+    team.primaryOwner = memberMap[team.primaryOwner];
   });
 
   //parse rosters for just the good stuff
@@ -118,8 +120,8 @@ const leagueSettings = await getLeagueSettings(leagueId);
   return (leagueData)
   
 }
-//local js testing only
-getLeagueStandings();
+// //local js testing only
+// getLeagueStandings();
 
 function parseRoster(teams, weekNum) {
 
@@ -143,14 +145,81 @@ function parseRoster(teams, weekNum) {
         droppable: p.playerPoolEntry.player.droppable,
         isInjured:  p.playerPoolEntry.player.injured,
         projectedTotal: p.playerPoolEntry.player.stats
-            .flatMap(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 1) {
+            .map(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 1) {
                 return {projectedTotal: s.appliedTotal}}}),
         actualTotal: p.playerPoolEntry.player.stats
-            .flatMap(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 0) {
+            .map(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 0) {
                 return {actualTotal: s.appliedTotal}}})
 
       })) // You have to rename it separately in nested objects
   }));
 
   return parsedRoster
+}
+
+export async function getBoxScores(leagueId, weekNum = 1) {
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
+  var raw = [];
+  //fetch data, caching it.
+  raw = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+    res.json()
+  )
+
+
+  for (var i in data)
+    raw.push([i, data[i]])
+  let members = [];
+  let rawSchedule = [];
+  
+  
+  members = raw.find(([key]) => key === "members")[1];
+  teams = raw.find(([key]) => key === "teams")[1];
+  rawSchedule = raw.find(([key]) => key === "schedule")[1];
+
+  //The reduce() function creates a map of member IDs to their first names.
+  const memberMap = members.reduce((acc, member) => {
+    acc[member.id] = member.firstName;
+    return acc;
+  }, {});
+
+  //apply the memberMap to each team
+  teams.forEach((team, i) => {
+    team.primaryOwner = memberMap[team.primaryOwner];
+  });
+  
+  //The reduce() function creates a map of teamIDs to their first names.
+  const teamIdMap = teams.reduce((acc, team) => {
+    acc[team.id] = team.primaryOwner;
+    return acc;
+  }, {});
+
+    //apply the memberMap to each team
+    rawSchedule.forEach((m, i) => {
+      //there is always a match so map directly to the value.
+      m.home.primaryOwner = teamIdMap[m.home.teamId];
+      m.away.primaryOwner = teamIdMap[m.away.teamId];
+      
+      m.home.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
+      m.away.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
+
+      m.home.barColorHome = m.home.homeResult === 'Win' ? "Limegreen" : "Brown"
+      m.away.barColorAway = m.away.awayResult === 'Win' ? "Limegreen" : "Brown"
+    });
+
+    schedule = rawSchedule.reduce((acc, m) => {
+      if (!acc[m.matchupPeriodId]) {
+        // If not, create an empty array for that key
+        acc[m.matchupPeriodId] = [];
+      }
+      // Push the current item into the appropriate array
+      acc[m.matchupPeriodId].push(m);
+
+      return acc
+    }, [])
+
+  console.log(rawSchedule);
+
+  return {
+
+  }
 }
