@@ -1,7 +1,5 @@
 // import draftData from '../../api/gvl-draft2023.json'
-import { Table, TableHeader, TableColumn, TableBody, TableRow, TableCell, getKeyValue } from "@nextui-org/react";
 import getLeagueStandings from "../../api/newApiFetch";
-import getLeagueSettings from "../../api/leagueConfig";
 
 export default async function BuildStandings({ slug }) {
     const leagueValues = {

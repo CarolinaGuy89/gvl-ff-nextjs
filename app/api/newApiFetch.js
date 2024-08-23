@@ -157,20 +157,22 @@ function parseRoster(teams, weekNum) {
   return parsedRoster
 }
 
-export async function getBoxScores(leagueId, weekNum = 1) {
+export async function getBoxScores(leagueId) {
   const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
   var raw = [];
+  var fetched = [];
   //fetch data, caching it.
-  raw = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+  fetched = await fetch(URL, { cache: 'force-cache' }).then((res) =>
     res.json()
   )
 
 
-  for (var i in data)
-    raw.push([i, data[i]])
+  for (var i in fetched)
+    raw.push([i, fetched[i]])
   let members = [];
   let rawSchedule = [];
-  
+  let schedule = [];
+  let teams = [];
   
   members = raw.find(([key]) => key === "members")[1];
   teams = raw.find(([key]) => key === "teams")[1];
@@ -196,16 +198,25 @@ export async function getBoxScores(leagueId, weekNum = 1) {
     //apply the memberMap to each team
     rawSchedule.forEach((m, i) => {
       //there is always a match so map directly to the value.
-      m.home.primaryOwner = teamIdMap[m.home.teamId];
-      m.away.primaryOwner = teamIdMap[m.away.teamId];
-      
-      m.home.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
-      m.away.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
-
-      m.home.barColorHome = m.home.homeResult === 'Win' ? "Limegreen" : "Brown"
-      m.away.barColorAway = m.away.awayResult === 'Win' ? "Limegreen" : "Brown"
+      m.homeManager = teamIdMap[m.home.teamId];
+      m.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
+      m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
+      m.homeScore = m.home.totalPoints
+      m.homeTeamId = m.home.teamId
+        try {
+            m.awayManager = teamIdMap[m.away.teamId];
+            m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
+            m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
+            m.awayScore = m.away.totalPoints
+            m.awayTeamId = m.away.teamId
+        } catch (error) {
+            m.homeResult = 'Win'
+            m.barColorHome = "Limegreen"
+            m.winner = 'HOME'
+        }
+      m.matchupNames = m.homeManager+" vs. "+m.awayManager
     });
-
+    
     schedule = rawSchedule.reduce((acc, m) => {
       if (!acc[m.matchupPeriodId]) {
         // If not, create an empty array for that key
@@ -217,9 +228,7 @@ export async function getBoxScores(leagueId, weekNum = 1) {
       return acc
     }, [])
 
-  console.log(rawSchedule);
+  console.log(schedule);
 
-  return {
-
-  }
+  return schedule;
 }

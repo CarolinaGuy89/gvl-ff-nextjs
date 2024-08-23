@@ -1,7 +1,7 @@
 'use client'
 import React from "react";
 import { Suspense } from 'react'
-import { Chart } from "chart.js";
+import BuildMatchups from "./matchup";
 import MenuButton from "@/app/components/Navbar";
 
 export default function Home({ params }) {
@@ -12,7 +12,6 @@ export default function Home({ params }) {
     family: "League of Family Drama",
     hockey: "Full Contact Turf Hockey",
   }
-
   
   return (
     <main>
@@ -28,7 +27,9 @@ export default function Home({ params }) {
       </section>
 
       <section className="chartMatchup">
-
+        <Suspense fallback={<h2 className="chartTitle">Evaluating the Playbook...</h2>}>
+          <BuildMatchups slug={params.slug} suppressHydrationWarning />
+        </Suspense>
       </section>
     </main>
   );
