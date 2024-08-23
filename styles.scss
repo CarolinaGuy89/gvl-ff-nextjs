@@ -1,0 +1,43 @@
+$success: #7952b3;
+
+@import "bootstrap/scss/bootstrap.scss";
+
+
+body {
+  padding: 0rem;
+  line-height: 1;
+  background-color: #00000000;
+}
+
+.offcanvas {
+  color: #333;
+  background-color: rgba(245, 245, 245,.8);
+}
+
+.nav-link {
+  color: #333;
+  padding: 1rem var(--bs-nav-link-padding-x)
+
+}
+
+.btn-primary {
+  --bs-btn-border-color: none;
+}
+
+.btn {
+  --bs-btn-border-radius: 0px;
+}
+
+h6, .h6, h4, .h4, h2, .h2, h1, .h1 {
+ color: whitesmoke
+}
+
+h3, .h3 {
+  line-height: 1;
+}
+
+.leagueStandings th {
+  border-bottom: 2px solid black;
+  text-align: center;
+  line-height: 1.5;
+}

@@ -11,8 +11,8 @@ export default async function BuildStandings({ slug }) {
         hockey: 1335739020,
     }
 
-    console.log('Received slug:', slug);
-    console.log('Received slug:', leagueValues[slug]);
+    // console.log('Received slug:', slug);
+    // console.log('Received slug:', leagueValues[slug]);
     const columns = [
         {
             key: "leagueLocalRank",
@@ -50,7 +50,7 @@ export default async function BuildStandings({ slug }) {
     ];
 
     const leagueStandings = await getLeagueStandings(leagueValues[slug]);
-    const s = getLeagueSettings(leagueValues[slug]);
+    //const s = getLeagueSettings(leagueValues[slug]);
 
     const transformedStandings = leagueStandings.map((t) => ({
         ...t,
