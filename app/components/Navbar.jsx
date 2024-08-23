@@ -22,6 +22,7 @@ export default function MenuButton(params) {
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Matchup</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/team`}>My Team</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/draft`}>Draft Results</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/rules`}>House Rules</Nav.Link>
               <Nav.Link href="/">Change Leauge</Nav.Link>
             </Nav>
           </Offcanvas.Body>
