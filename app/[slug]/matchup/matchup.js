@@ -270,8 +270,11 @@ const CustomTooltip = ({ active, payload }) => {
                 <BarChart
                     width={360}
                     height={400}
+                    margin={{top: 5, right:5, bottom: 5, left: -20}}
                     data={weekData}>
                     <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width/props.xAxis.tickCount}/>
+                    <YAxis tick={{ fill: 'white' }} label={{ value:'Points', fill: 'white', angle: -90, offset: -45, position:"bottom"}} />
+                    <XAxis tick={false} label={{ value:'Matchups', fill: 'white', offset:-15, position:"bottom"}} />
                     <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />}/>
                     <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
                         <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
@@ -285,7 +288,7 @@ const CustomTooltip = ({ active, payload }) => {
                             <Cell key={`${entry}`} fill={entry.barColorAway} />
                         ))}
                     </Bar>
-                    <YAxis tick={{ fill: 'white' }}/>
+
                    
                 </BarChart>
         </section>
