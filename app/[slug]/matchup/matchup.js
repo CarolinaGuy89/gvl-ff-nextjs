@@ -247,35 +247,47 @@ export default async function BuildMatchups({ slug }) {
 
     ]
 
+// Custom tooltip component
+const CustomTooltip = ({ active, payload }) => {
+    if (active && payload && payload.length) {
+        const { homeManager, awayManager, matchupPeriodId, homeScore, awayScore } = payload[0].payload;
+        return (
+            <div className="custom-tooltip" style={{ backgroundColor: '#fff', border: '1px solid #ccc', padding: '10px' }}>
+                <p className="toolTip">{`Week ${matchupPeriodId}`}</p>
+                <p className="toolTip">{`${homeManager}: ${homeScore}`}</p>
+                <p className="toolTip">{`${awayManager}: ${awayScore}`}</p>
+            </div>
+        );
+    }
 
+    return null;
+};
 
 
     console.log(weekData)
     return (
         <section>
-            <ResponsiveContainer>
                 <BarChart
-                    width={400}
+                    width={360}
                     height={400}
                     data={weekData}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} />
-                    <Bar dataKey="homeScore" activeBar={<Rectangle fill="pink" stroke="blue" />}>
+                    <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width/props.xAxis.tickCount}/>
+                    <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />}/>
+                    <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
                         <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
                         {weekData.map((entry) => (
                             <Cell key={`${entry}`} fill={entry.barColorHome} />
                         ))}
                     </Bar>
-                    <Bar dataKey="awayScore">
+                    <Bar dataKey="awayScore" activeBar={<Rectangle fill="teal" stroke="black" />}>
                         <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
                         {weekData.map((entry) => (
                             <Cell key={`${entry}`} fill={entry.barColorAway} />
                         ))}
                     </Bar>
-                    <YAxis fill="white" />
-                    <XAxis />
+                    <YAxis tick={{ fill: 'white' }}/>
+                   
                 </BarChart>
-            </ResponsiveContainer>
         </section>
     );
 }
