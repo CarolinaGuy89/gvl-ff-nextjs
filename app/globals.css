@@ -30,6 +30,7 @@ p {
 body {
   line-height: 1.5;
   -webkit-font-smoothing: antialiased;
+  width: 100%;
 }
 /*
   5. Improve media defaults
@@ -70,7 +71,7 @@ p, h1, h2, h3, h4, h5, h6 {
 }
 
 h1 {
-  font-size: 28px;
+  font-size: calc(1.4rem + 2vw);
   margin-bottom: 0%;
 }
 
@@ -85,6 +86,11 @@ h4 {
   margin-block-end: -15px;
   padding-top: 1em;
   font-size: 18px;
+  color: black;
+  display: flex;
+  justify-content: center;
+  align-content: start;
+  flex-wrap: wrap;
 }
 
 h6 {
@@ -99,7 +105,6 @@ p.toolTip {
 body {
   color: whitesmoke;
   margin: 0px;
-  display: flex;
   justify-content: center;
   }
 
@@ -137,31 +142,56 @@ tr:nth-child(even) {
   background-color:rgba(0, 0, 0, 0);
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  grid-gap: 20px;
   text-align: center;
-  color: black;
+  justify-content: space-around;
+  margin-left: 8px;
+  margin-right: 10px;
+}
+
+.selectLeague a {
+  text-decoration: none;
 }
 
 .leagueCard {
   background-color: rgba(255, 255, 255, .6);
-  border-radius: 10px;
+  border-radius: 20px;
   box-shadow: .5rem .5rem .5rem #00000090;
-  width: 90%;
+  width: 100%;
 }
 
-.leagueCard.link {
-  width: 20%;
+.leagueCard img {
+  align-self: end;
+  display: inline;
 }
+
+
 
 .chartStandings {
   margin-left: auto;
   margin-right: auto;
 }
 
+/************************
+*
+*   Site Title
+*
+************************/
+
+.siteTitle {
+  text-align: center;
+}
+
 .pageTitle {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  grid-gap: 10px;
+  grid-template-columns: 2fr 1fr;
+  column-gap: 10px;
+  margin-left: 5px;
+  row-gap: 0px;
+}
+
+.MenuButtonText {
+  font-size: 12px;
 }
 
 .menu-bar {
@@ -187,4 +217,8 @@ tr:nth-child(even) {
   background-color: rgba(200, 255, 227, 0.719);
   color: black;
   font-weight: bold;
+}
+
+.menuOverlay {
+  max-width: 50%;
 }
