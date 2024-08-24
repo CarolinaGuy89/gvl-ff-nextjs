@@ -11,7 +11,7 @@ export default function Home({ params }) {
       <section className="siteTitle">
         <br/>
         <h1>Fantasy Football Stats<br /></h1>
-        <h6>Come see how bad you're doing.</h6>
+        <h6>Come see how bad you&apos;re doing.</h6>
         <hr />
       </section>
 
