@@ -157,7 +157,7 @@ function parseRoster(teams, weekNum) {
   return parsedRoster
 }
 
-export async function getBoxScores(leagueId) {
+export async function getBoxScores(leagueId, weekNum) {
   const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
   var raw = [];
   var fetched = [];
@@ -229,6 +229,5 @@ export async function getBoxScores(leagueId) {
     }, [])
 
   console.log(schedule);
-
   return schedule;
 }

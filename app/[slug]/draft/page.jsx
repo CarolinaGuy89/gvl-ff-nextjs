@@ -19,8 +19,8 @@ export default function Home({ params }) {
       <section className="pageTitle">
         <h1>{labelsMap[params.slug]}<br /></h1>
         <MenuButton slug={[params.slug]} />
+        <h6>Fantasy Football stats</h6>
       </section>
-      <h6>Fantasy Football stats</h6>
       <hr />
 
       <section>
@@ -28,7 +28,7 @@ export default function Home({ params }) {
       </section>
 
       <section className="chartTeamPreformance">
-      <p>If you see this, it is working. coming soon.</p>
+      <p>If you see this, it is working. Coming soon.</p>
       </section>
     </main>
   );

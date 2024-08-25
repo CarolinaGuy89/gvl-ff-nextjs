@@ -11,17 +11,18 @@ export default function MenuButton(params) {
     console.log("slug: ",params)
     return (
     <section className="menu-bar">
-        <Button variant="primary" onClick={handleShow}>Menu &#9776;</Button>
+        <Button variant="primary" onClick={handleShow}>&#9776;</Button>
         <Offcanvas show={show} placement='end' onHide={handleClose}>
           <Offcanvas.Header closeButton>
-            <Offcanvas.Title>Menu:</Offcanvas.Title>
+            <Offcanvas.Title >Menu:</Offcanvas.Title>
           </Offcanvas.Header>
           <Offcanvas.Body>
-            <Nav defaultActiveKey="/home" className="flex-column">
+            <Nav defaultActiveKey="/home" className="menuOverlay">
               <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link >
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Matchup</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/team`}>My Team</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/draft`}>Draft Results</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/rules`}>House Rules</Nav.Link>
               <Nav.Link href="/">Change Leauge</Nav.Link>
             </Nav>
           </Offcanvas.Body>

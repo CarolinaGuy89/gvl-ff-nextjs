@@ -8,10 +8,17 @@ export default function Home({ params }) {
   return (
 
     <main>
-      <section>
-        <h1>Choose your league below:<br /></h1>
-        <h6>Fantasy Football stats</h6>
+      <section className="siteTitle">
+        <br/>
+        <h1>Fantasy Football Stats<br /></h1>
+        <h6>Come see how bad you&apos;re doing.</h6>
+        <hr />
       </section>
+
+      <section>
+        <h2 className="chartTitle">Choose your league</h2>
+      </section>
+
       <section className="selectLeague">
         <Link href="gvl/home">
           <div className="leagueCard">

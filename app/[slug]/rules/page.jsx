@@ -19,16 +19,21 @@ export default function Home({ params }) {
       <section className="pageTitle">
         <h1>{labelsMap[params.slug]}<br /></h1>
         <MenuButton slug={[params.slug]} />
+        <h6>Fantasy Football stats</h6>
       </section>
-      <h6>Fantasy Football stats</h6>
+
       <hr />
 
       <section>
-        <h2 className="chartTitle">Team Preformance</h2>
+        <h2 className="chartTitle">House Rules</h2>
       </section>
 
       <section className="chartTeamPreformance">
-      <p>If you see this, it is working. Coming soon.</p>
+      <h6>Final Season standings:</h6>
+      <ol type="1">
+      <li>If you make playoffs, your final ranking is decided by the playoff bracket, otherwise end of regular season.</li>
+      </ol>
+
       </section>
     </main>
   );
