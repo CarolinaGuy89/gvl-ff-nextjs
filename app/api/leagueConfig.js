@@ -2,18 +2,6 @@
 
 export default async function getLeagueSettings(leagueId) {
     
-    const leagueValues = {
-        gvl: 1248073066,
-        it: 601844230,
-        family: 283159008,
-        hockey: 1335739020,
-    }
-
-    //If the slug is passed instead of a number
-    if (typeof leagueId === 'string' && leagueValues[leagueId]) {
-        leagueId = leagueValues[leagueId];
-    }
-    
     switch (leagueId) {
         //GVL
         case 1248073066:

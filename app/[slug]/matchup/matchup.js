@@ -1,6 +1,6 @@
 import { getBoxScores } from '@/app/api/newApiFetch';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 
 
 
@@ -11,9 +11,9 @@ export default async function BuildMatchups({ slug, weekNum=calculateDefaultWeek
         family: 283159008,
         hockey: 1335739020,
     }
-    
-    var weekData = await getBoxScores(leagueValues[slug]);
-    weekData = weekData[weekNum]
+    var weekData = []
+    const allData = await getBoxScores(leagueValues[slug]);
+    weekData = allData[weekNum]
 
     const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -30,8 +30,10 @@ export default async function BuildMatchups({ slug, weekNum=calculateDefaultWeek
     return null;
 };
 
-
-    console.log(weekData)
+if (weekData == null){
+    return 
+    } else {
+    //console.log(weekData)
     return (
         <section>
         <section>
@@ -62,7 +64,7 @@ export default async function BuildMatchups({ slug, weekNum=calculateDefaultWeek
                    
                 </BarChart>
         </section>
-    );
+    );}
 }
 
 //Calculate the current week

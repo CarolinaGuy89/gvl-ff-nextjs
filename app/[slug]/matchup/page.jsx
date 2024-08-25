@@ -11,7 +11,8 @@ export default function Home({ params }) {
   const [selectedWeek, setSelectedWeek] = useState(1);
 
   const handleSelect = (eventKey) => {
-    setSelectedWeek(eventKey);
+    let key = eventKey.replace("#","")
+    setSelectedWeek(key);
 };
 
   const labelsMap = {

@@ -158,7 +158,7 @@ function parseRoster(teams, weekNum) {
 }
 
 export async function getBoxScores(leagueId, weekNum) {
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
   var raw = [];
   var fetched = [];
   //fetch data, caching it.
@@ -199,12 +199,16 @@ export async function getBoxScores(leagueId, weekNum) {
     rawSchedule.forEach((m, i) => {
       //there is always a match so map directly to the value.
       m.homeManager = teamIdMap[m.home.teamId];
+      m.homeManager = m.homeManager.trim()
+      m.homeManager = m.homeManager.charAt(0).toUpperCase() + m.homeManager.slice(1);
       m.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
       m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
       m.homeScore = m.home.totalPoints
       m.homeTeamId = m.home.teamId
         try {
             m.awayManager = teamIdMap[m.away.teamId];
+            m.awayManager = m.awayManager.trim()
+            m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
             m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
             m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
             m.awayScore = m.away.totalPoints
@@ -214,7 +218,7 @@ export async function getBoxScores(leagueId, weekNum) {
             m.barColorHome = "Limegreen"
             m.winner = 'HOME'
         }
-      m.matchupNames = m.homeManager+" vs. "+m.awayManager
+      // m.matchupNames = m.homeManager+" vs. "+m.awayManager
     });
     
     schedule = rawSchedule.reduce((acc, m) => {
