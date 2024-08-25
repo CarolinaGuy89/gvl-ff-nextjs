@@ -40,7 +40,7 @@ export default function Home({ params }) {
               onSelect={handleSelect}
             >
                 {buttons.map((num) => (
-                    <Dropdown.Item eventKey={num} href={`#${num}`}>Week: {num}</Dropdown.Item>
+                    <Dropdown.Item key={num} href={`#${num}`}>Week: {num}</Dropdown.Item>
                 ))}
 
             </DropdownButton>
