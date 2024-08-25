@@ -29,7 +29,11 @@ export default function Home({ params }) {
       </section>
 
       <section className="chartTeamPreformance">
-      <p>If you see this, it is working. Coming soon.</p>
+      <h6>Final Season standings:</h6>
+      <ol type="1">
+      <li>If you make playoffs, your final ranking is decided by the playoff bracket, otherwise end of regular season.</li>
+      </ol>
+
       </section>
     </main>
   );

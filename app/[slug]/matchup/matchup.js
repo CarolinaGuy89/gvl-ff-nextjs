@@ -1,254 +1,21 @@
 import { getBoxScores } from '@/app/api/newApiFetch';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
-import React, { PureComponent } from 'react';
+import React, { useEffect, useState } from 'react';
 
 
 
-export default async function BuildMatchups({ slug }) {
+export default async function BuildMatchups({ slug, weekNum=calculateDefaultWeek() }) {
     const leagueValues = {
         gvl: 1248073066,
         it: 601844230,
         family: 283159008,
         hockey: 1335739020,
     }
-    //var boxscores = await getBoxScores(leagueValues[slug]);
+    
+    var weekData = await getBoxScores(leagueValues[slug]);
+    weekData = weekData[weekNum]
 
-    let weekData = [
-        {
-            "away": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 130.3
-                },
-                "teamId": 8,
-                "tiebreak": 0,
-                "totalPoints": 130.3
-            },
-            "home": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 122.04
-                },
-                "teamId": 9,
-                "tiebreak": 0,
-                "totalPoints": 122.04
-            },
-            "id": 6,
-            "matchupPeriodId": 2,
-            "playoffTierType": "NONE",
-            "winner": "AWAY",
-            "homeManager": "Marty",
-            "homeResult": "Loss",
-            "barColorHome": "Brown",
-            "homeScore": 122.04,
-            "homeTeamId": 9,
-            "awayManager": "Cale",
-            "awayResult": "Win",
-            "barColorAway": "Limegreen",
-            "awayScore": 130.3,
-            "awayTeamId": 8
-        },
-        {
-            "away": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 123.3
-                },
-                "teamId": 1,
-                "tiebreak": 0,
-                "totalPoints": 123.3
-            },
-            "home": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 165.42
-                },
-                "teamId": 5,
-                "tiebreak": 0,
-                "totalPoints": 165.42
-            },
-            "id": 7,
-            "matchupPeriodId": 2,
-            "playoffTierType": "NONE",
-            "winner": "HOME",
-            "homeManager": "Ryan",
-            "homeResult": "Win",
-            "barColorHome": "Limegreen",
-            "homeScore": 165.42,
-            "homeTeamId": 5,
-            "awayManager": "Sam",
-            "awayResult": "Loss",
-            "barColorAway": "Brown",
-            "awayScore": 123.3,
-            "awayTeamId": 1
-        },
-        {
-            "away": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 107.34
-                },
-                "teamId": 4,
-                "tiebreak": 0,
-                "totalPoints": 107.34
-            },
-            "home": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 104.08
-                },
-                "teamId": 10,
-                "tiebreak": 0,
-                "totalPoints": 104.08
-            },
-            "id": 8,
-            "matchupPeriodId": 2,
-            "playoffTierType": "NONE",
-            "winner": "AWAY",
-            "homeManager": "Russ",
-            "homeResult": "Loss",
-            "barColorHome": "Brown",
-            "homeScore": 104.08,
-            "homeTeamId": 10,
-            "awayManager": "Matt",
-            "awayResult": "Win",
-            "barColorAway": "Limegreen",
-            "awayScore": 107.34,
-            "awayTeamId": 4
-        },
-        {
-            "away": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 84.66
-                },
-                "teamId": 3,
-                "tiebreak": 0,
-                "totalPoints": 84.66
-            },
-            "home": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 129.34
-                },
-                "teamId": 7,
-                "tiebreak": 0,
-                "totalPoints": 129.34
-            },
-            "id": 9,
-            "matchupPeriodId": 2,
-            "playoffTierType": "NONE",
-            "winner": "HOME",
-            "homeManager": "Cody",
-            "homeResult": "Win",
-            "barColorHome": "Limegreen",
-            "homeScore": 129.34,
-            "homeTeamId": 7,
-            "awayManager": "Arthur",
-            "awayResult": "Loss",
-            "barColorAway": "Brown",
-            "awayScore": 84.66,
-            "awayTeamId": 3
-        },
-        {
-            "away": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 125.38
-                },
-                "teamId": 6,
-                "tiebreak": 0,
-                "totalPoints": 125.38
-            },
-            "home": {
-                "adjustment": 0,
-                "cumulativeScore": {
-                    "losses": 0,
-                    "statBySlot": null,
-                    "ties": 0,
-                    "wins": 0
-                },
-                "pointsByScoringPeriod": {
-                    "2": 142.06
-                },
-                "teamId": 2,
-                "tiebreak": 0,
-                "totalPoints": 142.06
-            },
-            "id": 10,
-            "matchupPeriodId": 2,
-            "playoffTierType": "NONE",
-            "winner": "HOME",
-            "homeManager": "Alex",
-            "homeResult": "Win",
-            "barColorHome": "Limegreen",
-            "homeScore": 142.06,
-            "homeTeamId": 2,
-            "awayManager": "Steven",
-            "awayResult": "Loss",
-            "barColorAway": "Brown",
-            "awayScore": 125.38,
-            "awayTeamId": 6
-        }
-
-    ]
-
-// Custom tooltip component
-const CustomTooltip = ({ active, payload }) => {
+    const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
         const { homeManager, awayManager, matchupPeriodId, homeScore, awayScore } = payload[0].payload;
         return (
@@ -267,6 +34,9 @@ const CustomTooltip = ({ active, payload }) => {
     console.log(weekData)
     return (
         <section>
+        <section>
+            <h2 className="chartTitle">{`Week ${weekNum} Matchups`}</h2>
+        </section>
                 <BarChart
                     width={360}
                     height={400}
@@ -293,4 +63,22 @@ const CustomTooltip = ({ active, payload }) => {
                 </BarChart>
         </section>
     );
+}
+
+//Calculate the current week
+function calculateDefaultWeek() {
+
+    const currentDate = new Date();
+    const startOfWeek1 = new Date('2024-09-05'); // Thursday of NFL Week one
+    const millisecondsInAWeek = 604800000;
+    var weeksSinceStart = Math.floor((currentDate - startOfWeek1) / millisecondsInAWeek);
+
+    if (weeksSinceStart < 0) {
+      weeksSinceStart = 0;
+    }
+    
+    // Ensure the week number is between 0 and 17 (or your season's max week)
+    // 0 = Preseason
+    //return Math.min(Math.max(weeksSinceStart + 1, 1), 17);
+    return Math.min(Math.max(weeksSinceStart, 0), 18);
 }
