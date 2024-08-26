@@ -1,28 +1,19 @@
 //use this for npm run dev
 import getLeagueSettings from './leagueConfig'
 import { slotCategoryIdToPositionMap } from '../components/constants'
+import calculateDefaultWeek from './calcCurrentWeek';
 
 export default async function getLeagueStandings(leagueId) {
-const leagueSettings = await getLeagueSettings(leagueId);
-
-//Local Testing only
-// async function getLeagueStandings(leagueId = 1248073066) {
-//  const leagueSettings = {
-//     playoffQty: 6,
-//     lastRegularSeasonWeek: 14
-// }
-
-//end local testing
-
-
-  //console.log("leagueSettings.playoffQty", leagueSettings.playoffQty)
- //console.log("leagueSettings.lastRegularSeasonWeek", leagueSettings.lastRegularSeasonWeek)
+  const leagueSettings = await getLeagueSettings(leagueId);
 
   var arr = [];
-  const weekNum = 17;
+  let weekNum = calculateDefaultWeek();
+    // if (weekNum == 0) {
+    //   weekNum = 1
+    // }
   let rawData = []
   if (Number.isInteger(leagueId)) {
-    const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2023/segments/0/leagues/"+leagueId+"?scoringPeriodId="+weekNum+"&view=mRoster&view=mTeam"
+    const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
     //fetch data, caching it.
     rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
       res.json()
@@ -49,6 +40,7 @@ const leagueSettings = await getLeagueSettings(leagueId);
     preSeasonRank: 'draftDayProjectedRank',
     currentProjectedRank: 'currentProjectedRank',
     gamesBack: 'gamesBack',
+    roster: 'roster',
   };
 
 
@@ -71,6 +63,9 @@ const leagueSettings = await getLeagueSettings(leagueId);
   //apply the memberMap to each team
   teams.forEach((team, i) => {
     team.primaryOwner = memberMap[team.primaryOwner];
+    team.primaryOwner = team.primaryOwner
+      .trim()
+      .charAt(0).toUpperCase() + team.primaryOwner.slice(1);
   });
 
   //parse rosters for just the good stuff
@@ -89,7 +84,7 @@ const leagueSettings = await getLeagueSettings(leagueId);
         newItem[newKey] = item[oldKey];
       }
     }
-    newItem.winPercentage = newItem.winPercentage*100
+    newItem.winPercentage = newItem.winPercentage * 100
     newItem.leagueLocalRank = newItem.regularSeasonStanding
     newItem.pointsAgainst = newItem.pointsAgainst.toFixed(0)
     newItem.pointsFor = newItem.pointsFor.toFixed(0)
@@ -115,10 +110,15 @@ const leagueSettings = await getLeagueSettings(leagueId);
         t.leagueLocalRank = t.postSeasonRanking
       }
     });
+  } else if (weekNum == 0) {
+    leagueData.forEach(t => {
+      t.leagueLocalRank = t.preSeasonRank
+    });
   }
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
+  console.log(leagueData)
   return (leagueData)
-  
+
 }
 // //local js testing only
 // getLeagueStandings();
@@ -127,38 +127,37 @@ function parseRoster(teams, weekNum) {
 
   let parsedRoster = teams.map(item => ({
     ...item,
-      roster: item.roster.entries.map(p => ({
-        //newName: oldLocation.oldName
-        lineupSlotId: p.lineupSlotId,
-        playerId: p.playerId,
-        defaultPositionId: p.playerPoolEntry.player.defaultPositionId,
-        eligibleSlots: p.playerPoolEntry.player.eligibleSlots.map(
-            position => slotCategoryIdToPositionMap[position]
-        ),
-        playerId: p.playerPoolEntry.player.id,
-        firstName: p.playerPoolEntry.player.firstName,
-        fullName: p.playerPoolEntry.player.fullName,
-        lastName: p.playerPoolEntry.player.lastName,
-        isInjured: p.playerPoolEntry.player.injured,
-        injuryStatus: p.playerPoolEntry.player.injuryStatus,
-        proTeamId: p.playerPoolEntry.player.proTeamId,
-        droppable: p.playerPoolEntry.player.droppable,
-        isInjured:  p.playerPoolEntry.player.injured,
-        projectedTotal: p.playerPoolEntry.player.stats
-            .map(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 1) {
-                return {projectedTotal: s.appliedTotal}}}),
-        actualTotal: p.playerPoolEntry.player.stats
-            .map(s => {if (s.scoringPeriodId === weekNum && s.statSourceId === 0) {
-                return {actualTotal: s.appliedTotal}}})
+    roster: item.roster.entries.map(p => ({
 
-      })) // You have to rename it separately in nested objects
+      //newName: oldLocation.oldName
+      lineupSlotId: p.lineupSlotId,
+      playerId: p.playerId,
+      defaultPositionId: slotCategoryIdToPositionMap[p.playerPoolEntry.player.defaultPositionId],
+      eligibleSlots: p.playerPoolEntry.player.eligibleSlots.map(
+        position => slotCategoryIdToPositionMap[position]
+      ),
+      playerId: p.playerPoolEntry.player.id,
+      firstName: p.playerPoolEntry.player.firstName,
+      fullName: p.playerPoolEntry.player.fullName,
+      lastName: p.playerPoolEntry.player.lastName,
+      isInjured: p.playerPoolEntry.player.injured,
+      injuryStatus: p.playerPoolEntry.player.injuryStatus,
+      proTeamId: p.playerPoolEntry.player.proTeamId,
+      droppable: p.playerPoolEntry.player.droppable,
+      isInjured: p.playerPoolEntry.player.injured,
+      projectedTotal: p.playerPoolEntry.player.stats
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1).appliedTotal ?? 0,
+      actualTotal: p.playerPoolEntry.player.stats
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0).appliedTotal ?? 0,
+
+    })) // You have to rename it separately in nested objects
   }));
-
+  console.log("parsedRoster: ",parsedRoster)
   return parsedRoster
 }
 
 export async function getBoxScores(leagueId, weekNum) {
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/"+leagueId+"?view=mMatchupScore&view=mTeam"
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?view=mMatchupScore&view=mTeam"
   var raw = [];
   var fetched = [];
   //fetch data, caching it.
@@ -173,7 +172,7 @@ export async function getBoxScores(leagueId, weekNum) {
   let rawSchedule = [];
   let schedule = [];
   let teams = [];
-  
+
   members = raw.find(([key]) => key === "members")[1];
   teams = raw.find(([key]) => key === "teams")[1];
   rawSchedule = raw.find(([key]) => key === "schedule")[1];
@@ -188,49 +187,49 @@ export async function getBoxScores(leagueId, weekNum) {
   teams.forEach((team, i) => {
     team.primaryOwner = memberMap[team.primaryOwner];
   });
-  
+
   //The reduce() function creates a map of teamIDs to their first names.
   const teamIdMap = teams.reduce((acc, team) => {
     acc[team.id] = team.primaryOwner;
     return acc;
   }, {});
 
-    //apply the memberMap to each team
-    rawSchedule.forEach((m, i) => {
-      //there is always a match so map directly to the value.
-      m.homeManager = teamIdMap[m.home.teamId];
-      m.homeManager = m.homeManager.trim()
-      m.homeManager = m.homeManager.charAt(0).toUpperCase() + m.homeManager.slice(1);
-      m.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
-      m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
-      m.homeScore = m.home.totalPoints
-      m.homeTeamId = m.home.teamId
-        try {
-            m.awayManager = teamIdMap[m.away.teamId];
-            m.awayManager = m.awayManager.trim()
-            m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
-            m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
-            m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
-            m.awayScore = m.away.totalPoints
-            m.awayTeamId = m.away.teamId
-        } catch (error) {
-            m.homeResult = 'Win'
-            m.barColorHome = "Limegreen"
-            m.winner = 'HOME'
-        }
-      // m.matchupNames = m.homeManager+" vs. "+m.awayManager
-    });
-    
-    schedule = rawSchedule.reduce((acc, m) => {
-      if (!acc[m.matchupPeriodId]) {
-        // If not, create an empty array for that key
-        acc[m.matchupPeriodId] = [];
-      }
-      // Push the current item into the appropriate array
-      acc[m.matchupPeriodId].push(m);
+  //apply the memberMap to each team
+  rawSchedule.forEach((m, i) => {
+    //there is always a match so map directly to the value.
+    m.homeManager = teamIdMap[m.home.teamId];
+    m.homeManager = m.homeManager.trim()
+    m.homeManager = m.homeManager.charAt(0).toUpperCase() + m.homeManager.slice(1);
+    m.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
+    m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
+    m.homeScore = m.home.totalPoints
+    m.homeTeamId = m.home.teamId
+    try {
+      m.awayManager = teamIdMap[m.away.teamId];
+      m.awayManager = m.awayManager.trim()
+      m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
+      m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
+      m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
+      m.awayScore = m.away.totalPoints
+      m.awayTeamId = m.away.teamId
+    } catch (error) {
+      m.homeResult = 'Win'
+      m.barColorHome = "Limegreen"
+      m.winner = 'HOME'
+    }
+    // m.matchupNames = m.homeManager+" vs. "+m.awayManager
+  });
 
-      return acc
-    }, [])
+  schedule = rawSchedule.reduce((acc, m) => {
+    if (!acc[m.matchupPeriodId]) {
+      // If not, create an empty array for that key
+      acc[m.matchupPeriodId] = [];
+    }
+    // Push the current item into the appropriate array
+    acc[m.matchupPeriodId].push(m);
+
+    return acc
+  }, [])
 
   console.log(schedule);
   return schedule;

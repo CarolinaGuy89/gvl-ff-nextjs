@@ -30,15 +30,17 @@ export default function Home({ params }) {
         <h1>{labelsMap[params.slug]}<br /></h1>
         <MenuButton slug={[params.slug]} />
         <h6>Fantasy Football stats</h6>
-        <section>
+        <section className="week">
         <DropdownButton
               as={ButtonGroup}
               key="start"
-              id={`dropdown-button-drop-start`}
+              id="weekSelector"
               drop="start"
-              variant="secondary"
+
               title="Week"
               onSelect={handleSelect}
+              data-bs-theme="dark"
+              className="weekSelector"
             >
                 {buttons.map((num) => (
                     <Dropdown.Item key={num} href={`#${num}`}>Week: {num}</Dropdown.Item>

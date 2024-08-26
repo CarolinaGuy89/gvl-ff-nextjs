@@ -222,3 +222,29 @@ tr:nth-child(even) {
 .menuOverlay {
   max-width: 50%;
 }
+
+.weekSelector button {
+  background-color: #335425;
+  color: whitesmoke;
+  border-radius: 5vw;
+}
+
+.week {
+  display: flex;
+  justify-content: center;
+}
+
+/************************
+*
+*   Desktop/Tablet changes
+*
+************************/
+
+@media (min-width: 768px) {
+  .selectLeague {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    grid-gap: 3vw;
+    margin-left: 5vw;
+    margin-right: 5vw;
+  }
+}
