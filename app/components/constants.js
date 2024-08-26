@@ -274,9 +274,11 @@ export const scoringItemToId = {
   
   export const slotCategoryIdToPositionMap = {
     0: 'QB',
-    1: 'TQB',
+    //1: 'TQB',
+    1: 'QB',
     2: 'RB',
-    3: 'RB/WR',
+    //3: 'RB/WR',
+    3: 'WR',
     4: 'WR',
     5: 'WR/TE',
     6: 'TE',
@@ -296,7 +298,8 @@ export const scoringItemToId = {
     20: 'Bench',
     21: 'IR',
     22: 'INVALID_CODE', // https://github.com/cwendt94/espn-api/blob/master/espn_api/football/constant.py#L24
-    23: 'RB/WR/TE',
+    //23: 'RB/WR/TE',
+    23: 'FLEX',
     24: 'ER',
     25: 'Rookie'
   };
