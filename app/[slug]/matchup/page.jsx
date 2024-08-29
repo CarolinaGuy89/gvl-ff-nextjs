@@ -26,10 +26,6 @@ export default function Home({ params }) {
 
   return (
     <main>
-      <section className="pageTitle">
-        <h1>{labelsMap[params.slug]}<br /></h1>
-        <MenuButton slug={[params.slug]} />
-        <h6>Fantasy Football stats</h6>
         <section className="week">
         <DropdownButton
               as={ButtonGroup}
@@ -48,11 +44,6 @@ export default function Home({ params }) {
 
             </DropdownButton>
       </section>
-      </section>
-
-      <hr />
-
-
 
       <section className="chartMatchup">
         <Suspense fallback={<h2 className="chartTitle">Evaluating the Playbook...</h2>}>
