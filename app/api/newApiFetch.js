@@ -8,9 +8,9 @@ export default async function getLeagueStandings(leagueId) {
 
   var arr = [];
   let weekNum = calculateDefaultWeek();
-    // if (weekNum == 0) {
-    //   weekNum = 1
-    // }
+    if (weekNum == 0) {
+      weekNum = 1
+    }
   let rawData = []
   if (Number.isInteger(leagueId)) {
     const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
@@ -101,7 +101,7 @@ export default async function getLeagueStandings(leagueId) {
   });
 
 
-
+  //Set Season Rankings
   if (weekNum > leagueSettings.lastRegularSeasonWeek) {
     leagueData.forEach(t => {
       if (t.leagueLocalRank > leagueSettings.playoffQty) {
@@ -110,11 +110,8 @@ export default async function getLeagueStandings(leagueId) {
         t.leagueLocalRank = t.postSeasonRanking
       }
     });
-  } else if (weekNum == 0) {
-    leagueData.forEach(t => {
-      t.leagueLocalRank = t.preSeasonRank
-    });
   }
+
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
   console.log(leagueData)
   return (leagueData)
@@ -146,9 +143,9 @@ function parseRoster(teams, weekNum) {
       droppable: p.playerPoolEntry.player.droppable,
       isInjured: p.playerPoolEntry.player.injured,
       projectedTotal: p.playerPoolEntry.player.stats
-        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1).appliedTotal ?? 0,
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1)?.appliedTotal ?? 0,
       actualTotal: p.playerPoolEntry.player.stats
-        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0).appliedTotal ?? 0,
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0)?.appliedTotal ?? 0,
 
     })) // You have to rename it separately in nested objects
   }));
