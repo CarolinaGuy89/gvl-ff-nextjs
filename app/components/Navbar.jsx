@@ -2,6 +2,7 @@
 import { Button, Offcanvas } from "react-bootstrap";
 import { Nav } from "react-bootstrap";
 import { useState } from "react";
+import Link from "next/link";
 
 export default function MenuButton(params) {
     const [show, setShow] = useState(false);
@@ -18,11 +19,13 @@ export default function MenuButton(params) {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav defaultActiveKey="/home" className="menuOverlay">
-              <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link >
+              <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link>
+
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Matchup</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/team`}>My Team</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/draft`}>Draft Results</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/rules`}>House Rules</Nav.Link>
+              
+              <Nav.Link href={`/${params.slug[0]}/team`} disabled>Team Overview (Coming Soon!)</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Draft Results (Coming Soon!)</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/rules`} disabled>House Rules (Coming Soon!)</Nav.Link>
               <Nav.Link href="/">Change Leauge</Nav.Link>
             </Nav>
           </Offcanvas.Body>
