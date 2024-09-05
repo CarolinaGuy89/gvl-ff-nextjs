@@ -1,8 +1,5 @@
-'use client'
 import React from "react";
-import { Suspense } from 'react'
 import BuildStandings from './leagueStandings'
-import MenuButton from "@/app/components/Navbar";
 
 export default function LeagueOverview({ params }) {
 
@@ -15,9 +12,7 @@ export default function LeagueOverview({ params }) {
       </section>
 
       <section className="chartStandings">
-        <Suspense fallback={<h2 className="chartTitle">Undergoing officals review...</h2>}>
           <BuildStandings slug={params.slug} />
-        </Suspense>
       </section>
     </main>
   )
