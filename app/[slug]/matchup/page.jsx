@@ -15,12 +15,6 @@ export default function Home({ params }) {
     setSelectedWeek(key);
 };
 
-  const labelsMap = {
-    gvl: "G-Vegas",
-    it: "Logistically, IT's complicated",
-    family: "League of Family Drama",
-    hockey: "Full Contact Turf Hockey",
-  }
   let num;
   const buttons = Array.from({ length: 18 }, (_, index) => index + 1);
 
@@ -47,7 +41,7 @@ export default function Home({ params }) {
 
       <section className="chartMatchup">
         <Suspense fallback={<h2 className="chartTitle">Evaluating the Playbook...</h2>}>
-          <BuildMatchups slug={params.slug} weekNum={selectedWeek} suppressHydrationWarning />
+          <BuildMatchups slug={params.slug} weekNum={selectedWeek}/>
         </Suspense>
       </section>
     </main>
