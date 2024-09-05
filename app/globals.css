@@ -168,8 +168,9 @@ tr:nth-child(even) {
 
 
 .chartStandings {
-  margin-left: auto;
-  margin-right: auto;
+justify-content: center;
+display: flex;
+flex-direction: column;
 }
 
 /************************
@@ -231,7 +232,8 @@ tr:nth-child(even) {
 
 .week {
   display: flex;
-  justify-content: center;
+  justify-content: flex-end;
+  margin-right: 1rem;
 }
 
 /************************
