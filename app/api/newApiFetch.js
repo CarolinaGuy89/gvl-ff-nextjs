@@ -84,6 +84,7 @@ export default async function getLeagueStandings(leagueId) {
         newItem[newKey] = item[oldKey];
       }
     }
+
     newItem.winPercentage = newItem.winPercentage * 100
     newItem.leagueLocalRank = newItem.regularSeasonStanding
     newItem.pointsAgainst = newItem.pointsAgainst.toFixed(0)
@@ -97,10 +98,11 @@ export default async function getLeagueStandings(leagueId) {
     //   }
     // }
 
+
     return newItem;
   });
 
-
+  weekNum = calculateDefaultWeek();
   //Set Season Rankings
   if (weekNum > leagueSettings.lastRegularSeasonWeek) {
     leagueData.forEach(t => {
@@ -110,6 +112,10 @@ export default async function getLeagueStandings(leagueId) {
         t.leagueLocalRank = t.postSeasonRanking
       }
     });
+  } else if (weekNum == 0 ) {
+    leagueData.forEach(t => {
+      t.leagueLocalRank = t.preSeasonRank
+    });
   }
 
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
@@ -117,15 +123,29 @@ export default async function getLeagueStandings(leagueId) {
   return (leagueData)
 
 }
-// //local js testing only
-// getLeagueStandings();
 
 function parseRoster(teams, weekNum) {
 
+  let maxProjectedTotal = 0; 
+
   let parsedRoster = teams.map(item => ({
     ...item,
-    roster: item.roster.entries.map(p => ({
+    roster: item.roster.entries.map(p => {
+      let projectedTotal= p.playerPoolEntry.player.stats
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1)?.appliedTotal ?? 0;
+      
+      let actualTotal= p.playerPoolEntry.player.stats
+        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0)?.appliedTotal ?? 0;
 
+        if (projectedTotal > maxProjectedTotal) {
+          maxProjectedTotal = projectedTotal;
+        }
+
+        let pointDelta = "N/A";
+        if (actualTotal != 0) {
+           pointDelta = ((actualTotal-projectedTotal)/actualTotal)*100;
+        }
+      return {
       //newName: oldLocation.oldName
       lineupSlotId: p.lineupSlotId,
       playerId: p.playerId,
@@ -142,14 +162,13 @@ function parseRoster(teams, weekNum) {
       proTeamId: p.playerPoolEntry.player.proTeamId,
       droppable: p.playerPoolEntry.player.droppable,
       isInjured: p.playerPoolEntry.player.injured,
-      projectedTotal: p.playerPoolEntry.player.stats
-        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1)?.appliedTotal ?? 0,
-      actualTotal: p.playerPoolEntry.player.stats
-        .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0)?.appliedTotal ?? 0,
-
-    })) // You have to rename it separately in nested objects
+      projectedTotal: projectedTotal.toFixed(2),
+      actualTotal: actualTotal,
+      pointDelta: pointDelta,
+      maxProjectedTotal: maxProjectedTotal,
+    };
+    }) // You have to rename it separately in nested objects
   }));
-  console.log("parsedRoster: ",parsedRoster)
   return parsedRoster
 }
 
@@ -201,7 +220,7 @@ export async function getBoxScores(leagueId, weekNum) {
     m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
     m.homeScore = m.home.totalPoints
     m.homeTeamId = m.home.teamId
-    try {
+    try { //to deal with Bye weeks. Bye Weeks are always Home.
       m.awayManager = teamIdMap[m.away.teamId];
       m.awayManager = m.awayManager.trim()
       m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
@@ -228,6 +247,6 @@ export async function getBoxScores(leagueId, weekNum) {
     return acc
   }, [])
 
-  console.log(schedule);
+  console.log("schedule: called")
   return schedule;
 }
