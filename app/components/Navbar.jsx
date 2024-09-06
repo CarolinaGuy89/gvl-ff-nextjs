@@ -25,7 +25,7 @@ export default function MenuButton(params) {
               <Nav.Link href={`/${params.slug[0]}/team`}>Team Overview</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Draft Results (Coming Soon!)</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/rules`} disabled>House Rules (Coming Soon!)</Nav.Link>
-              <Nav.Link href="/">Change Leauge</Nav.Link>
+              <Nav.Link href="/">Change League</Nav.Link>
             </Nav>
           </Offcanvas.Body>
         </Offcanvas>

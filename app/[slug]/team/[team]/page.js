@@ -6,7 +6,7 @@ export default function Home({ params }) {
 
   return (
     <main>
-          <PlayerPreformanceChart slug={params.slug} teamId={params.team}/>
+      <PlayerPreformanceChart slug={params.slug} teamId={params.team}/>
     </main>
   );
 }

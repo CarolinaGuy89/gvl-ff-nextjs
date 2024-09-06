@@ -58,6 +58,7 @@ export default async function getLeagueStandings(leagueId) {
     gamesBack: 'gamesBack',
     roster: 'roster',
     minActualTotal: 'minActualTotal',
+    maxTotal: 'maxTotal',
   };
 
 
@@ -155,6 +156,13 @@ function parseRoster(teams, weekNum) {
         if (actualTotal != 0) {
            pointDelta = parseFloat((actualTotal - projectedTotal).toFixed(2));
         }
+        let maxTotal;
+        if (actualTotal > projectedTotal) {
+          maxTotal = actualTotal
+        } else {
+          maxTotal = projectedTotal
+        }
+
       return {
       //newName: oldLocation.oldName
       lineupSlotId: slotCategoryIdToPositionMap[p.lineupSlotId],
@@ -174,15 +182,18 @@ function parseRoster(teams, weekNum) {
       projectedTotal: parseFloat(projectedTotal.toFixed(2)),
       actualTotal: parseFloat(actualTotal.toFixed(2)),
       pointDelta: pointDelta,
+      maxTotal: parseFloat(maxTotal.toFixed(2)),
     };
     }) // You have to rename it separately in nested objects
     .sort((a, b) => positionOrder.indexOf(a.lineupSlotId) - positionOrder.indexOf(b.lineupSlotId)); // Sorting lineupSlotId
     
     let minActualTotal = Math.min(...roster.map(p => p.actualTotal));
+    let maxTotal = Math.max(...roster.map(p => p.maxTotal));
     return {
       ...item,
       roster,
       minActualTotal, // Add the minActualTotal to the roster output
+      maxTotal,
     };
   });
   return parsedRoster;
