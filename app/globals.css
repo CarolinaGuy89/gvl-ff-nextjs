@@ -83,8 +83,7 @@ h2 {
 
 h4 {
 
-  margin-block-end: -15px;
-  padding-top: 1em;
+
   font-size: 18px;
   color: black;
   display: flex;
@@ -160,12 +159,35 @@ tr:nth-child(even) {
   width: 100%;
 }
 
+.leagueCard h4 {
+  margin-block-end: -15px;
+  padding-top: 1em;
+}
+
 .leagueCard img {
   align-self: end;
   display: inline;
 }
 
+.nameCard {
+  background-color: rgba(255, 255, 255, .6);
+  border-radius: 20px;
+  box-shadow: .5rem .5rem .5rem #00000090;
+  width: 100%;
+}
 
+.nameCard h4 {
+  margin-top: .5rem;
+  margin-bottom: 0.5rem;
+}
+
+.teamChart {
+  margin-left: 2%;
+  margin-right: 2%;
+  background-color: rgba(0, 0, 0, 0.45);
+  border-radius: 15px;
+
+}
 
 .chartStandings {
 justify-content: center;

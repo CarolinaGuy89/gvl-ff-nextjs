@@ -4,7 +4,6 @@ import { slotCategoryIdToPositionMap } from '../components/constants'
 import calculateDefaultWeek from './calcCurrentWeek';
 
 export default async function getLeagueStandings(leagueId) {
-  const leagueSettings = await getLeagueSettings(leagueId);
 
   var arr = [];
   let weekNum = calculateDefaultWeek();
@@ -13,17 +12,34 @@ export default async function getLeagueStandings(leagueId) {
     }
   let rawData = []
   if (Number.isInteger(leagueId)) {
-    const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
+
+    let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
+    //fetch data, caching it.
+    rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+      res.json()
+    )
+  } else {
+    const leagueValues = {
+      gvl: 1248073066,
+      it: 601844230,
+      family: 283159008,
+      hockey: 1335739020,
+    }
+
+    leagueId = leagueValues[leagueId];
+    let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
     //fetch data, caching it.
     rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
       res.json()
     )
   }
 
+  const leagueSettings = await getLeagueSettings(leagueId);
+
   let responseMap = {
     //newName: 'oldname'
     id: 'id',
-    abbreviation: 'abbrev',
+    abbrev: 'abbrev',
     logoURL: 'logo',
     draftDayProjectedRank: 'draftDayProjectedRank',
     teamName: 'name',
@@ -41,6 +57,7 @@ export default async function getLeagueStandings(leagueId) {
     currentProjectedRank: 'currentProjectedRank',
     gamesBack: 'gamesBack',
     roster: 'roster',
+    minActualTotal: 'minActualTotal',
   };
 
 
@@ -119,37 +136,29 @@ export default async function getLeagueStandings(leagueId) {
   }
 
   leagueData.sort((a, b) => a.leagueLocalRank - b.leagueLocalRank);
-  console.log(leagueData)
   return (leagueData)
 
 }
 
 function parseRoster(teams, weekNum) {
+  const positionOrder = ['QB', 'WR', 'RB', 'TE', 'FLEX', 'D/ST', 'K', "Bench", "IR"];
 
-  let maxProjectedTotal = 0; 
-
-  let parsedRoster = teams.map(item => ({
-    ...item,
-    roster: item.roster.entries.map(p => {
+  let parsedRoster = teams.map(item => {
+    let roster = item.roster.entries.map(p => {
       let projectedTotal= p.playerPoolEntry.player.stats
         .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 1)?.appliedTotal ?? 0;
       
       let actualTotal= p.playerPoolEntry.player.stats
         .find(s => s.scoringPeriodId === weekNum && s.statSourceId === 0)?.appliedTotal ?? 0;
 
-        if (projectedTotal > maxProjectedTotal) {
-          maxProjectedTotal = projectedTotal;
-        }
-
-        let pointDelta = "N/A";
+        let pointDelta = 0;
         if (actualTotal != 0) {
-           pointDelta = ((actualTotal-projectedTotal)/actualTotal)*100;
+           pointDelta = parseFloat((actualTotal - projectedTotal).toFixed(2));
         }
       return {
       //newName: oldLocation.oldName
-      lineupSlotId: p.lineupSlotId,
+      lineupSlotId: slotCategoryIdToPositionMap[p.lineupSlotId],
       playerId: p.playerId,
-      defaultPositionId: slotCategoryIdToPositionMap[p.playerPoolEntry.player.defaultPositionId],
       eligibleSlots: p.playerPoolEntry.player.eligibleSlots.map(
         position => slotCategoryIdToPositionMap[position]
       ),
@@ -162,15 +171,22 @@ function parseRoster(teams, weekNum) {
       proTeamId: p.playerPoolEntry.player.proTeamId,
       droppable: p.playerPoolEntry.player.droppable,
       isInjured: p.playerPoolEntry.player.injured,
-      projectedTotal: projectedTotal.toFixed(2),
-      actualTotal: actualTotal,
+      projectedTotal: parseFloat(projectedTotal.toFixed(2)),
+      actualTotal: parseFloat(actualTotal.toFixed(2)),
       pointDelta: pointDelta,
-      maxProjectedTotal: maxProjectedTotal,
     };
     }) // You have to rename it separately in nested objects
-  }));
-  return parsedRoster
-}
+    .sort((a, b) => positionOrder.indexOf(a.lineupSlotId) - positionOrder.indexOf(b.lineupSlotId)); // Sorting lineupSlotId
+    
+    let minActualTotal = Math.min(...roster.map(p => p.actualTotal));
+    return {
+      ...item,
+      roster,
+      minActualTotal, // Add the minActualTotal to the roster output
+    };
+  });
+  return parsedRoster;
+};
 
 export async function getBoxScores(leagueId, weekNum) {
   const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?view=mMatchupScore&view=mTeam"
@@ -216,9 +232,11 @@ export async function getBoxScores(leagueId, weekNum) {
     m.homeManager = teamIdMap[m.home.teamId];
     m.homeManager = m.homeManager.trim()
     m.homeManager = m.homeManager.charAt(0).toUpperCase() + m.homeManager.slice(1);
-    m.homeResult = JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss';
+    m.homeResult = m.winner !== 'UNDECIDED' 
+    ? (JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss') 
+    : "in progress";
     m.barColorHome = m.homeResult === 'Win' ? "Limegreen" : "Brown"
-    m.homeScore = m.home.totalPoints
+    m.homeScore = (m.home.totalPointsLive || m.home.totalPoints)
     m.homeTeamId = m.home.teamId
     try { //to deal with Bye weeks. Bye Weeks are always Home.
       m.awayManager = teamIdMap[m.away.teamId];
@@ -226,12 +244,22 @@ export async function getBoxScores(leagueId, weekNum) {
       m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
       m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
       m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
-      m.awayScore = m.away.totalPoints
+      m.awayScore = (m.away.totalPointsLive || m.away.totalPoints)
       m.awayTeamId = m.away.teamId
     } catch (error) {
       m.homeResult = 'Win'
       m.barColorHome = "Limegreen"
       m.winner = 'HOME'
+    }
+
+    if (m.homeResult === "in progress") {
+      if (m.homeScore > m.awayScore) {
+        m.barColorHome ="Limegreen"
+        m.barColorAway ="Brown"
+      } else {
+        m.barColorHome ="Brown"
+        m.barColorAway ="Limegreen"
+      }
     }
     // m.matchupNames = m.homeManager+" vs. "+m.awayManager
   });
@@ -247,6 +275,6 @@ export async function getBoxScores(leagueId, weekNum) {
     return acc
   }, [])
 
-  console.log("schedule: called")
+  console.log("schedule: called", schedule)
   return schedule;
 }

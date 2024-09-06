@@ -9,7 +9,6 @@ export default function MenuButton(params) {
     const handleClose = () => setShow(false);
     const handleShow = () => setShow(true);
 
-    console.log("slug: ",params)
     return (
     <section className="menu-bar">
         <Button variant="primary" onClick={handleShow}>&#9776;</Button>
@@ -20,10 +19,10 @@ export default function MenuButton(params) {
           <Offcanvas.Body>
             <Nav defaultActiveKey="/home" className="menuOverlay">
               <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link>
-
+              <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Weekly Overview (Coming Soon!)</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Matchup</Nav.Link>
               
-              <Nav.Link href={`/${params.slug[0]}/team`} disabled>Team Overview (Coming Soon!)</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/team`}>Team Overview</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Draft Results (Coming Soon!)</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/rules`} disabled>House Rules (Coming Soon!)</Nav.Link>
               <Nav.Link href="/">Change Leauge</Nav.Link>
