@@ -59,6 +59,7 @@ export default async function getLeagueStandings(leagueId) {
     roster: 'roster',
     minActualTotal: 'minActualTotal',
     maxTotal: 'maxTotal',
+    lineupLocked: 'lineupLocked',
   };
 
 
@@ -142,7 +143,7 @@ export default async function getLeagueStandings(leagueId) {
 }
 
 function parseRoster(teams, weekNum) {
-  const positionOrder = ['QB', 'WR', 'RB', 'TE', 'FLEX', 'D/ST', 'K', "Bench", "IR"];
+  const positionOrder = ['QB', 'RB', 'WR', 'TE', 'FLEX', 'D/ST', 'K', "Bench", "IR"];
 
   let parsedRoster = teams.map(item => {
     let roster = item.roster.entries.map(p => {
@@ -183,6 +184,7 @@ function parseRoster(teams, weekNum) {
       actualTotal: parseFloat(actualTotal.toFixed(2)),
       pointDelta: pointDelta,
       maxTotal: parseFloat(maxTotal.toFixed(2)),
+      lineupLocked: p.playerPoolEntry.lineupLocked,
     };
     }) // You have to rename it separately in nested objects
     .sort((a, b) => positionOrder.indexOf(a.lineupSlotId) - positionOrder.indexOf(b.lineupSlotId)); // Sorting lineupSlotId

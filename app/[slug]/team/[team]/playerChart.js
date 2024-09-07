@@ -20,6 +20,30 @@ export default async function PlayerPreformanceChart({ slug, teamId }) {
     }
     return null;
   };
+
+  const CustomizedTick = (props) => {
+      let started = team.roster.find(p => p.fullName === props.payload.value).lineupLocked
+      let lastName = team.roster.find(p => p.fullName === props.payload.value)?.lastName ?? " "
+      let firstName = team.roster.find(p => p.fullName === props.payload.value)?.firstName ?? " "
+      firstName = Array.from(`${firstName}`)[0]
+        props.fill = "oldlace"
+        props.scaleToFit = "true"
+      let name;
+      if (started) {
+        name = <text {...props}>{`${firstName}. ${lastName}🔒`}</text>
+      } else if (firstName == " ") {
+        name = <text></text>
+      } else {
+        name = <text {...props}>{`${firstName}. ${lastName}`}</text>
+      }
+      return (
+      <g>
+        {name}
+      </g>
+    )
+
+  };
+
   team.roster.splice(9, 0, { fullName: " " });
   console.log(team.roster)
   return (
@@ -29,8 +53,9 @@ export default async function PlayerPreformanceChart({ slug, teamId }) {
         <h5>{team.teamName} Player Preformance</h5>
         <ResponsiveContainer margin={{ top: 0, right: 20, left: 200, bottom: 0 }} width="100%" height={640}>
           <ComposedChart layout="vertical" data={team.roster}>
-            <CartesianGrid strokeDasharray="2 2" horizontal={false} horizontalCoordinatesGenerator={(props) => props.height > 250 ? [75, 150, 225] : [100, 200]} />
-            <YAxis type="category" dataKey={"fullName"} width={120} tick={{ fill: "oldlace" }} axisLine={false} />
+            <CartesianGrid strokeDasharray="2 2" horizontal={false} />
+
+            <YAxis type="category" dataKey="fullName" scaleToFit = {true} width={110} axisLine={false} allowDataOverflow tick={CustomizedTick}/>
             <XAxis type="number" dataKey="maxTotal" tick={{ fill: "oldlace" }} domain={[team.minActualTotal, "dataMax"]} orientation="top" interval="preserveEnd" />
             <ReferenceLine x={0} />
             <ReferenceLine isFront='true' y=' ' stroke="limegreen" strokeWidth='3' label={{ value: "Bench", position: "bottom", fill: "oldlace" }} />
