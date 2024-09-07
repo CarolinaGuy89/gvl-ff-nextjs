@@ -60,6 +60,7 @@ export default async function getLeagueStandings(leagueId) {
     minActualTotal: 'minActualTotal',
     maxTotal: 'maxTotal',
     lineupLocked: 'lineupLocked',
+    weekNum: 'weekNum',
   };
 
 
@@ -196,6 +197,7 @@ function parseRoster(teams, weekNum) {
       roster,
       minActualTotal, // Add the minActualTotal to the roster output
       maxTotal,
+      weekNum,
     };
   });
   return parsedRoster;

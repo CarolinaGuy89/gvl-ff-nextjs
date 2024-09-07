@@ -189,6 +189,11 @@ tr:nth-child(even) {
 
 }
 
+.teamChart h5 {
+  justify-content: center;
+  display: flex;
+}
+
 .chartStandings {
 justify-content: center;
 display: flex;
