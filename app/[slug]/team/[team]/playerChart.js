@@ -2,15 +2,19 @@ import getLeagueStandings from "@/app/api/newApiFetch";
 import { ComposedChart, Bar, XAxis, YAxis, Tooltip, CartesianGrid, ResponsiveContainer, ReferenceLine, Cell, Legend, Rectangle} from 'recharts';
 import calculateDefaultWeek from "@/app/api/calcCurrentWeek";
 
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 60 seconds.
+export const revalidate = 60
+
 export default async function PlayerPreformanceChart({ slug, teamId }) {
   let team = []
   team = await getLeagueStandings(slug);
   team = team.find(r => r.id == teamId);
 
   let currWeekNum = calculateDefaultWeek();
-    console.log("currWeekNum",currWeekNum)
+    // console.log("currWeekNum",currWeekNum)
     currWeekNum = currWeekNum == team.weekNum;
-    console.log("currWeekNum",currWeekNum)
+    // console.log("currWeekNum",currWeekNum)
 
   const CustomTooltip = ({ active, payload }) => {
     if (active && payload && payload.length) {
@@ -50,10 +54,8 @@ export default async function PlayerPreformanceChart({ slug, teamId }) {
   // };
 
   team.roster.splice(9, 0, { fullName: " " });
-  console.log(team)
   return (
     <main>
-      <hr />
       <section className="teamChart">
         <h5>{team.teamName}</h5>
         <h5>Player Preformance</h5>

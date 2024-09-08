@@ -19,7 +19,7 @@ export default function MenuButton(params) {
           <Offcanvas.Body>
             <Nav defaultActiveKey="/home" className="menuOverlay">
               <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Weekly Overview (Coming Soon!)</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Weekly Summary (Coming Soon!)</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Matchup</Nav.Link>
               
               <Nav.Link href={`/${params.slug[0]}/team`}>Team Overview</Nav.Link>

@@ -2,7 +2,9 @@ import { getBoxScores } from '@/app/api/newApiFetch';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
 import React from 'react';
 
-
+// Next.js will invalidate the cache when a
+// request comes in, at most once every 60 seconds.
+export const revalidate = 60
 
 export default async function BuildMatchups({ slug, weekNum=calculateDefaultWeek() }) {
     const leagueValues = {
