@@ -25,7 +25,10 @@ export default function Home({ params }) {
       <hr/>
       <section className="selectLeague">
       {owners.map((owner, index) => {
-          const teamId = index + 1;
+          let teamId = index + 1;
+          if (params.slug == "hockey" && teamId >= 8) {
+            teamId += 1;
+          }
           return (
             <Link href={`/${params.slug}/team/${teamId}`} key={teamId} passHref>
               <Button variant="primary" className="nameCard">
