@@ -263,6 +263,65 @@ flex-direction: column;
   margin-right: 1rem;
 }
 
+
+.stat-card-container {
+  background-color:rgba(0, 0, 0, 0);
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-evenly;
+  padding-bottom: .25rem;
+  margin: 5px;
+}
+
+.stat-card {
+  background-color: rgba(255, 255, 255, .6);
+  border-radius: 5px;
+  box-shadow: .5rem .5rem .5rem #00000090;
+  color:black;
+  width: calc(20% - 20px);
+  padding: 0px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 45%;
+  margin: 5px;
+}
+
+.card-title {
+  background: var(--bright);
+  width: 100%;
+  border-radius: 5px 5px 0px 0px;
+  min-height: 25%;
+  text-align: center;
+  color:black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-title h3 {
+  margin: 7px;
+  font-size: medium;
+  font-weight: bold;
+}
+
+.stat-card p {
+  margin: 0px 7px 7px 7px;
+  text-align: center;
+  line-height:normal
+}
+
+.NavButtons {
+  display: flex;
+  justify-content: space-around;
+}
+
+.NavButtons .btn {
+  background-color: #335425;
+  color: whitesmoke;
+  outline-color: #335425;
+  border-radius: 5vw;
+}
 /************************
 *
 *   Desktop/Tablet changes
