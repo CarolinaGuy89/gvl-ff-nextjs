@@ -13,11 +13,6 @@ export default async function getLeagueStandings(leagueId) {
   let rawData = []
   if (Number.isInteger(leagueId)) {
 
-    let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
-    //fetch data, caching it.
-    rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
-      res.json()
-    )
   } else {
     const leagueValues = {
       gvl: 1248073066,
@@ -25,14 +20,14 @@ export default async function getLeagueStandings(leagueId) {
       family: 283159008,
       hockey: 1335739020,
     }
-
     leagueId = leagueValues[leagueId];
-    let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
-    //fetch data, caching it.
-    rawData = await fetch(URL, { cache: 'force-cache' }).then((res) =>
-      res.json()
-    )
   }
+
+  let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
+  //fetch data, caching it.
+  rawData = await fetch(URL, { cache: 'no-store' }).then((res) =>
+    res.json()
+  )
 
   const leagueSettings = await getLeagueSettings(leagueId);
 
@@ -122,7 +117,10 @@ export default async function getLeagueStandings(leagueId) {
     return newItem;
   });
 
-  weekNum = calculateDefaultWeek();
+  if (weekNum == 1) {
+    weekNum = calculateDefaultWeek();
+  }
+
   //Set Season Rankings
   if (weekNum > leagueSettings.lastRegularSeasonWeek) {
     leagueData.forEach(t => {
@@ -208,7 +206,7 @@ export async function getBoxScores(leagueId, weekNum) {
   var raw = [];
   var fetched = [];
   //fetch data, caching it.
-  fetched = await fetch(URL, { cache: 'force-cache' }).then((res) =>
+  fetched = await fetch(URL, { cache: 'no-store' }).then((res) =>
     res.json()
   )
 
@@ -290,6 +288,5 @@ export async function getBoxScores(leagueId, weekNum) {
     return acc
   }, [])
 
-  console.log("schedule: called", schedule)
   return schedule;
 }
