@@ -6,9 +6,13 @@ import MenuButton from "@/app/components/Navbar";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { ButtonGroup } from "react-bootstrap";
+import calculateDefaultWeek from "@/app/api/calcCurrentWeek";
 
 export default function Home({ params }) {
-  const [selectedWeek, setSelectedWeek] = useState(1);
+
+  let currWeek = calculateDefaultWeek()
+
+  const [selectedWeek, setSelectedWeek] = useState(currWeek);
 
   const handleSelect = (eventKey) => {
     let key = eventKey.replace("#","")
