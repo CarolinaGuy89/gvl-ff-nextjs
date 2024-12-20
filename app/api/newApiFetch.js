@@ -127,7 +127,7 @@ export default async function getLeagueStandings(leagueId) {
       if (t.leagueLocalRank > leagueSettings.playoffQty) {
         t.leagueLocalRank = t.regularSeasonStanding
       } else {
-        t.leagueLocalRank = t.postSeasonRanking
+        t.leagueLocalRank = t.currentProjectedRank
       }
     });
   } else if (weekNum == 0 ) {
