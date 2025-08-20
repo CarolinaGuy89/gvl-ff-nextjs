@@ -2,7 +2,7 @@
 export default function calculateDefaultWeek() {
 
     const currentDate = new Date();
-    const startOfWeek1 = new Date('2024-09-05'); // Thursday of NFL Week one
+    const startOfWeek1 = new Date('2025-09-04'); // Thursday of NFL Week one, yyyy-mm-dd
     const millisecondsInAWeek = 604800000;
     var weeksSinceStart = Math.ceil((currentDate - startOfWeek1) / millisecondsInAWeek);
 
