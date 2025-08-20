@@ -5,6 +5,7 @@ import calculateDefaultWeek from './calcCurrentWeek';
 
 export default async function getLeagueStandings(leagueId) {
 
+  const currentYear = 2025;  
   var arr = [];
   let weekNum = calculateDefaultWeek();
     if (weekNum == 0) {
@@ -23,7 +24,7 @@ export default async function getLeagueStandings(leagueId) {
     leagueId = leagueValues[leagueId];
   }
 
-  let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
+  let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + currentYear + "/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
   //fetch data, caching it.
   rawData = await fetch(URL, { cache: 'no-store' }).then((res) =>
     res.json()
@@ -202,7 +203,7 @@ function parseRoster(teams, weekNum) {
 };
 
 export async function getBoxScores(leagueId, weekNum) {
-  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/2024/segments/0/leagues/" + leagueId + "?view=mMatchupScore&view=mTeam"
+  const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + currentYear + "/segments/0/leagues/" + leagueId + "?view=mMatchupScore&view=mTeam"
   var raw = [];
   var fetched = [];
   //fetch data, caching it.
