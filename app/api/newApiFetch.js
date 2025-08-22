@@ -203,6 +203,7 @@ function parseRoster(teams, weekNum) {
 };
 
 export async function getBoxScores(leagueId, weekNum) {
+  const currentYear = 2025; 
   const URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + currentYear + "/segments/0/leagues/" + leagueId + "?view=mMatchupScore&view=mTeam"
   var raw = [];
   var fetched = [];

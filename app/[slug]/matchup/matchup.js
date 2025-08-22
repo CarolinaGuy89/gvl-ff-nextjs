@@ -3,6 +3,11 @@ import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, L
 import React from 'react';
 
 export default async function BuildMatchups({ slug, weekNum = calculateDefaultWeek() }) {
+    //Default preseason to week 1
+    if (weekNum == 0) {
+        weekNum = 1;
+    }
+    
     const leagueValues = {
         gvl: 1248073066,
         it: 601844230,
