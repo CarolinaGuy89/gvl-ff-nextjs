@@ -15,7 +15,7 @@ export default function Home({ params }) {
       owners = ['Steven', 'Jay', 'Kimberlee', 'Charles', 'Rob', 'Sandeep', 'Gouri', 'Ted', 'Markus', 'Milton', 'Taylor', 'Carl']
       break;
     case "hockey":
-      owners = ['Steven', 'Rob', 'Vince', 'Jack', 'Hutson', 'Alex', 'Mike', 'Markus', 'Seth', 'Milan']
+      owners = ['Steven', 'Rob', 'Vince', 'Jack', 'Hutson', 'Alex', 'Mike', 'Markus', 'Seth', 'Grant']
       break;
   }
 

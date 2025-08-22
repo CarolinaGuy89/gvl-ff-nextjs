@@ -14,9 +14,9 @@ export default async function getLeagueSettings(leagueId) {
         //IT
         case 601844230:
             var leagueSettings = {
-                playoffQty: 4,
+                playoffQty: 6,
                 lastRegularSeasonWeek: 14,
-                finalWeek: 16,
+                finalWeek: 17,
             }
             break
         //family
