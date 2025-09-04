@@ -1,4 +1,5 @@
 import { getBoxScores } from '@/app/api/newApiFetch';
+import { getInfectedPlayer } from '@/app/api/leagueConfig';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
 import React from 'react';
 
@@ -17,6 +18,17 @@ export default async function BuildMatchups({ slug, weekNum = calculateDefaultWe
     var weekData = []
     const allData = await getBoxScores(leagueValues[slug]);
     weekData = allData[weekNum]
+    //Infected Player Logic
+    if (slug == 'gvl') {
+        const infectedPlayer = await getInfectedPlayer(weekNum)
+        const infectedMatchup = weekData.find(matchup => matchup.homeManager === infectedPlayer || matchup.awayManager === infectedPlayer);
+        
+        if (infectedMatchup.homeManager === infectedPlayer) {
+            infectedMatchup.homeManager = infectedMatchup.homeManager + '☣️';
+        } else if (infectedMatchup.awayManager === infectedPlayer) {
+            infectedMatchup.awayManager = infectedMatchup.awayManager + '☣️';
+        }
+    }
 
     const CustomTooltip = ({ active, payload }) => {
         if (active && payload && payload.length) {

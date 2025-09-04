@@ -40,7 +40,7 @@ export default async function getLeagueSettings(leagueId) {
 }
 
 export async function getInfectedPlayer(weekNum) {
-    const getInfectedPlayer = {
+    const infectedPlayers = {
       //Player who is infected at the start of week:
         0: "Alex",
         1: "Alex",
@@ -62,4 +62,11 @@ export async function getInfectedPlayer(weekNum) {
         17: "",
         18: ""
     }
+
+    for (let i = weekNum; i >= 0; i--) {
+        if (infectedPlayers[i]) {
+            return infectedPlayers[i];
+        }
+    }
+    return getInfectedPlayer[weekNum]
 }

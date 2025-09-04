@@ -1,4 +1,5 @@
 //use this for npm run dev
+import {getInfectedPlayer} from './leagueConfig'
 import getLeagueSettings from './leagueConfig'
 import { slotCategoryIdToPositionMap } from '../components/constants'
 import calculateDefaultWeek from './calcCurrentWeek';
@@ -88,6 +89,13 @@ export default async function getLeagueStandings(leagueId) {
   //parse rosters for just the good stuff
   teams = parseRoster(teams, weekNum);
   //console.log("Teams w/ parsed roster:", teams);
+
+  //Infected Player Logic
+  if (leagueId == '1248073066') {
+    const infectedPlayer = await getInfectedPlayer(weekNum)
+    const infectedTeam = teams.find(team => team.primaryOwner === infectedPlayer);
+    infectedTeam.primaryOwner = "☣️ " +infectedTeam.primaryOwner
+  }
 
   //apply the responseMap to each team
   const leagueData = teams.map(item => {
@@ -234,7 +242,12 @@ export async function getBoxScores(leagueId, weekNum) {
   //apply the memberMap to each team
   teams.forEach((team, i) => {
     team.primaryOwner = memberMap[team.primaryOwner];
+      team.primaryOwner = team.primaryOwner
+      .trim()
+      .toLowerCase();
+    team.primaryOwner = team.primaryOwner.charAt(0).toUpperCase() + team.primaryOwner.slice(1);
   });
+
 
   //The reduce() function creates a map of teamIDs to their first names.
   const teamIdMap = teams.reduce((acc, team) => {
@@ -247,7 +260,7 @@ export async function getBoxScores(leagueId, weekNum) {
     //there is always a match so map directly to the value.
     m.homeManager = teamIdMap[m.home.teamId];
     m.homeManager = m.homeManager.trim()
-    m.homeManager = m.homeManager.charAt(0).toUpperCase() + m.homeManager.slice(1);
+    m.homeManager = m.homeManager
     m.homeResult = m.winner !== 'UNDECIDED' 
     ? (JSON.stringify(m.winner) === '"HOME"' ? 'Win' : 'Loss') 
     : "in progress";
@@ -257,7 +270,7 @@ export async function getBoxScores(leagueId, weekNum) {
     try { //to deal with Bye weeks. Bye Weeks are always Home.
       m.awayManager = teamIdMap[m.away.teamId];
       m.awayManager = m.awayManager.trim()
-      m.awayManager = m.awayManager.charAt(0).toUpperCase() + m.awayManager.slice(1);
+      m.awayManager = m.awayManager
       m.awayResult = JSON.stringify(m.winner) === '"AWAY"' ? 'Win' : 'Loss';
       m.barColorAway = m.awayResult == 'Win' ? "Limegreen" : "Brown"
       m.awayScore = (m.away.totalPointsLive || m.away.totalPoints)

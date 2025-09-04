@@ -1,4 +1,5 @@
 import getLeagueStandings from "../../api/newApiFetch";
+import { getInfectedPlayer } from '@/app/api/leagueConfig';
 
 export default async function BuildStandings({ slug }) {
     const leagueValues = {
