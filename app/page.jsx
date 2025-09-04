@@ -25,7 +25,7 @@ export default function Home({ params }) {
             <h4>{<br />}G-Vegas</h4>
             <Image
               src="/gvl.svg"
-              alt="Next.js Logo"
+              alt="G-Vegas"
               width={120}
               height={100}
               priority
@@ -38,7 +38,7 @@ export default function Home({ params }) {
             <h4>League of {<br />}Family Drama</h4>
             <Image
               src="/family.svg"
-              alt="Next.js Logo"
+              alt="Family"
               width={120}
               height={100}
               priority
@@ -51,7 +51,7 @@ export default function Home({ params }) {
             <h4>Logistically, IT&apos;s{<br />}complicated</h4>
             <Image
               src="/computer.svg"
-              alt="Next.js Logo"
+              alt="IT"
               width={120}
               height={100}
               priority
@@ -64,7 +64,7 @@ export default function Home({ params }) {
             <h4>Full Contact {<br />}Turf Hockey</h4>
             <Image
               src="/hockey.svg"
-              alt="Next.js Logo"
+              alt="Hockey"
               width={120}
               height={100}
               priority

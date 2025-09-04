@@ -81,7 +81,8 @@ export default async function getLeagueStandings(leagueId) {
     team.primaryOwner = memberMap[team.primaryOwner];
     team.primaryOwner = team.primaryOwner
       .trim()
-      .charAt(0).toUpperCase() + team.primaryOwner.slice(1);
+      .toLowerCase();
+    team.primaryOwner = team.primaryOwner.charAt(0).toUpperCase() + team.primaryOwner.slice(1);
   });
 
   //parse rosters for just the good stuff
