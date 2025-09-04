@@ -1,5 +1,5 @@
+import infectedData from '../components/infectedPlayers.json' assert { type: 'json' }
 // Requires leagueId to function
-
 export default async function getLeagueSettings(leagueId) {
     
     switch (leagueId) {
@@ -40,32 +40,10 @@ export default async function getLeagueSettings(leagueId) {
 }
 
 export async function getInfectedPlayer(weekNum) {
-    const infectedPlayers = {
-      //Player who is infected at the start of week:
-        0: "Alex",
-        1: "Alex",
-        2: "",
-        3: "",
-        4: "",
-        5: "",
-        6: "",
-        7: "",
-        8: "",
-        9: "",
-        10: "",
-        11: "",
-        12: "",
-        13: "",
-        14: "",
-        15: "",
-        16: "",
-        17: "",
-        18: ""
-    }
 
     for (let i = weekNum; i >= 0; i--) {
-        if (infectedPlayers[i]) {
-            return infectedPlayers[i];
+        if (infectedData.infectedPlayers[i]) {
+            return infectedData.infectedPlayers[i];
         }
     }
     return getInfectedPlayer[weekNum]
