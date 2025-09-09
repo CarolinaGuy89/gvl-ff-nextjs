@@ -303,4 +303,10 @@ export const scoringItemToId = {
     24: 'ER',
     25: 'Rookie'
   };
-  
+
+  export const ownersByLeague = {
+    gvl: ['Sam', 'Alex', 'Arthur', 'Matt', 'Ryan', 'Steven', 'Cody', 'Cale', 'Marty', 'Russ'],
+    family: ['Steven', 'Sam', 'Brenda', 'Allison', 'Sheila', 'Josh', 'Fred', 'Kayla'],
+    it: ['Steven', 'Jay', 'Kimberlee', 'Charles', 'Rob', 'Sandeep', 'Gouri', 'Ted', 'Markus', 'Milton', 'Taylor', 'Carl'],
+    hockey: ['Steven', 'Rob', 'Vince', 'Jack', 'Hutson', 'Alex', 'Mike', 'Markus', 'Seth', 'Grant'],
+  };

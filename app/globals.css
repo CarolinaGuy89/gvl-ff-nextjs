@@ -323,6 +323,13 @@ flex-direction: column;
   border-radius: 5vw;
   border-color: #00000000;
 }
+
+.draftPicks > div {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px; /* space between columns */
+  justify-items: center;
+}
 /************************
 *
 *   Desktop/Tablet changes
@@ -336,4 +343,11 @@ flex-direction: column;
     margin-left: 5vw;
     margin-right: 5vw;
   }
+
+  .stat-card {
+  width: 22%;
+}
+.draftPicks > div {
+  grid-template-columns: 1fr 1fr 1fr;
+}
 }

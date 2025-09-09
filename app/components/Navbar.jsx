@@ -21,7 +21,7 @@ export default function MenuButton(params) {
               <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Summary</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/team`}>Team Overview</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/draft`} disabled>Draft Results (Coming Eventually!)</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/draft`}>Draft Results</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/rules`} disabled>House Rules (Coming Soon!)</Nav.Link>
               {params.slug[0] == 'gvl' && (
                 <Nav.Link href={`/${params.slug[0]}/infected`}>Infected Players</Nav.Link>

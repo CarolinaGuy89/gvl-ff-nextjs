@@ -1,24 +1,10 @@
 import Link from 'next/link';
 import { Button } from 'react-bootstrap';
+import { ownersByLeague } from '@/app/components/constants';
 
 export default function Home({ params }) {
 
-  let owners = [];
-  switch (params.slug) {
-    case "gvl":
-      owners = ['Sam', 'Alex', 'Arthur', 'Matt', 'Ryan', 'Steven', 'Cody', 'Cale', 'Marty', 'Russ']
-      break;
-    case "family":
-      owners = ['Steven', 'Sam', 'Brenda', 'Allison', 'Sheila', 'Josh', 'Fred', 'Kayla']
-      break;
-    case "it":
-      owners = ['Steven', 'Jay', 'Kimberlee', 'Charles', 'Rob', 'Sandeep', 'Gouri', 'Ted', 'Markus', 'Milton', 'Taylor', 'Carl']
-      break;
-    case "hockey":
-      owners = ['Steven', 'Rob', 'Vince', 'Jack', 'Hutson', 'Alex', 'Mike', 'Markus', 'Seth', 'Grant']
-      break;
-  }
-
+const owners = ownersByLeague[params.slug] || [];
 
   return (
     <main>

@@ -1,13 +1,12 @@
 import getLeagueStandings from "../../api/newApiFetch";
-import { getInfectedPlayer } from '@/app/api/leagueConfig';
 
 export default async function BuildStandings({ slug }) {
-    const leagueValues = {
-        gvl: 1248073066,
-        it: 601844230,
-        family: 283159008,
-        hockey: 1335739020,
-    }
+    // const leagueValues = {
+    //     gvl: 1248073066,
+    //     it: 601844230,
+    //     family: 283159008,
+    //     hockey: 1335739020,
+    // }
 
     // Define the headers array
     const tableHeaders = [
@@ -19,8 +18,8 @@ export default async function BuildStandings({ slug }) {
     ];
 
     //Fetch data
-    const leagueStandings = await getLeagueStandings(leagueValues[slug]);
-
+    // const leagueStandings = await getLeagueStandings(leagueValues[slug]);
+    const leagueStandings = slug
     //Map the data for each row
     const transformedStandings = leagueStandings.map((t) => ({
         ...t,
