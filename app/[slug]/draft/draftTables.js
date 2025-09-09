@@ -14,8 +14,8 @@ export default async function BuildDraftTables({ slug, leagueStandings }) {
 
   const owners = ownersByLeague[slug] || [];
 
-  const module = await files[slug]();
-  const data = module.default;
+  const dataFiles = await files[slug]();
+  const data = dataFiles.default;
 
   // Group by teamId
   const grouped = data.reduce((acc, player) => {
@@ -71,7 +71,7 @@ for (const teamId in grouped) {
         const ownerName = owners[ownerIndex] || `Team ${teamId}`;
 
         return (
-          <div className={teamId}>
+          <div key={teamId} className={teamId}>
             <h2>{ownerName}</h2>
             <table>
               <thead>

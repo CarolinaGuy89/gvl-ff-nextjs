@@ -5,7 +5,7 @@ import BuildDraftTables from "./draftTables";
 import { useLeague } from "@/app/context/LeagueContext";
 import MenuButton from "@/app/components/Navbar";
 
-export default async function DraftPage({ params }) {
+export default function DraftPage({ params }) {
   //const draftData = await BuildDraftTables(params.slug);
   const { leagueStandings } = useLeague();
   return (
