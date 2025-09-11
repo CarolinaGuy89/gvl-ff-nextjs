@@ -158,9 +158,8 @@ weekData.forEach((item) => {
             //console.log(weekData)
             return (
                 <section>
-                    <section>
-                        <h2 className="chartTitle">{`Week ${weekNum} Matchups`}</h2>
-                    </section>
+                    <h2 className="chartTitle">{`Week ${weekNum} Matchups`}</h2>
+                <section className='matchupContent'>
                     <section className="stat-card-container">
                         <div className="stat-card">
                             <div className="card-title">
@@ -191,9 +190,10 @@ weekData.forEach((item) => {
 
                     </section>
 
+                    <section className='barChart'>
+                    <div style={{ width: "100%", height: "75vh" }}>
+                        <ResponsiveContainer width="100%" aspect={1}>
                     <BarChart
-                        width={360}
-                        height={400}
                         margin={{ top: 5, right: 5, bottom: 5, left: -20 }}
                         data={weekData}>
                         <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width / props.xAxis.tickCount} />
@@ -214,6 +214,10 @@ weekData.forEach((item) => {
                         </Bar>
 
                     </BarChart>
+                    </ResponsiveContainer>
+                    </div>
+                    </section>
+                    </section>    
                 </section>
             );
         }

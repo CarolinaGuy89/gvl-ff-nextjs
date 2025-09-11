@@ -337,6 +337,16 @@ flex-direction: column;
 ************************/
 
 @media (min-width: 768px) {
+
+  .pageTitle {
+    padding-left: 2%;
+  }
+
+  .chartStandings {
+    width: 60vw;
+    margin: 0 auto;
+  }
+
   .selectLeague {
     grid-template-columns: 1fr 1fr 1fr 1fr;
     grid-gap: 3vw;
@@ -345,9 +355,23 @@ flex-direction: column;
   }
 
   .stat-card {
-  width: 22%;
+  width: 33%;
 }
 .draftPicks > div {
   grid-template-columns: 1fr 1fr 1fr;
 }
+.matchupContent {
+    display: flex;
+    justify-content: space-around;
+    align-items: flex-start;
+    flex-direction: row-reverse;
+}
+.barChart {
+  margin: 5px;
+  padding-left: 2%;
+}
+  .teamChart {
+    width: 60vw;
+    margin: 0 auto;
+  }
 }
