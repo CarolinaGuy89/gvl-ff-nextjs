@@ -1,10 +1,12 @@
 'use client'
 import React from "react";
 import { Suspense } from 'react'
+import { useLeague } from "@/app/context/LeagueContext";
 
 import MenuButton from "@/app/components/Navbar";
 
 export default function Home({ params }) {
+  const { leagueStandings } = useLeague();
   
   return (
     <main>

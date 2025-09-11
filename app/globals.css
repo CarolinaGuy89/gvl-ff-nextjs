@@ -354,24 +354,49 @@ flex-direction: column;
     margin-right: 5vw;
   }
 
+  .stat-card-container{
+    height: 20vh;
+    width: 50vw;
+  }
   .stat-card {
-  width: 33%;
-}
-.draftPicks > div {
-  grid-template-columns: 1fr 1fr 1fr;
-}
-.matchupContent {
-    display: flex;
-    justify-content: space-around;
-    align-items: flex-start;
-    flex-direction: row-reverse;
-}
-.barChart {
-  margin: 5px;
-  padding-left: 2%;
-}
+    width: 33%;
+    padding: 1vh;
+    margin-bottom: 2vh;
+  }
+
+  .draftPicks > div {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+
+  .matchupContent {
+      display: flex;
+      justify-content: space-around;
+      align-items: flex-start;
+      flex-direction: row-reverse;
+  }
+
+  .barChart {
+    margin: 5px;
+    padding-left: 2%;
+  }
+
   .teamChart {
     width: 60vw;
     margin: 0 auto;
+  }
+
+  .desktop-button-bar {
+    padding: 1rem;
+  }
+
+  .desktop-button-bar .btn-secondary {
+    background-color: #335425;
+    color: whitesmoke;
+  }
+
+  .desktop-button-bar .btn-primary {
+    background-color: whitesmoke;
+    color: #335425;
+    font-weight: bold;
   }
 }

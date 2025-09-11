@@ -5,7 +5,7 @@ import BuildMatchups from "./matchup";
 import MenuButton from "@/app/components/Navbar";
 import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
-import { ButtonGroup } from "react-bootstrap";
+import { ButtonGroup, Button } from "react-bootstrap";
 import calculateDefaultWeek from "@/app/api/calcCurrentWeek";
 
 export default function Home({ params }) {
@@ -25,22 +25,40 @@ export default function Home({ params }) {
   return (
     <main>
         <section className="week">
-        <DropdownButton
-              as={ButtonGroup}
-              key="start"
-              id="weekSelector"
-              drop="start"
+        {/* MOBILE: visible only < md */}
+        <div className="d-md-none">
+          <DropdownButton
+                as={ButtonGroup}
+                key="start"
+                id="weekSelector"
+                drop="start"
 
-              title="Week"
-              onSelect={handleSelect}
-              data-bs-theme="dark"
-              className="weekSelector"
-            >
-                {buttons.map((num) => (
-                    <Dropdown.Item key={num} href={`#${num}`}>Week: {num}</Dropdown.Item>
-                ))}
+                title="Week"
+                onSelect={handleSelect}
+                data-bs-theme="dark"
+                className="weekSelector"
+              >
+                  {buttons.map((num) => (
+                      <Dropdown.Item key={num} href={`#${num}`}>Week: {num}</Dropdown.Item>
+                  ))}
 
-            </DropdownButton>
+              </DropdownButton>
+            </div>
+
+      {/* DESKTOP: visible only ≥ md */}
+        <div className="d-none d-md-block desktop-button-bar mx-auto">
+          <ButtonGroup className="flex-wrap">
+            {buttons.map((num) => (
+              <Button
+                key={num}
+                variant={num == selectedWeek ? "primary" : "secondary"}
+                onClick={() => setSelectedWeek(num)}
+              >
+                Week {num}
+              </Button>
+            ))}
+          </ButtonGroup>
+        </div>
       </section>
 
       <section className="chartMatchup">
