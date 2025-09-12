@@ -53,28 +53,34 @@ weekData.forEach(element => {
 let averageScore = (total / (weekData.length * 2)).toFixed(2);
 
 //Closest Game
-const closestMatch = weekData.reduce((closest, current) => {
-    const difference = Math.abs(current.homeScore - current.awayScore);
-    if (difference < closest.difference) {
-      closest.difference = difference.toFixed(2);
-      if (current.homeScore >= current.awayScore) {
-        closest.winner = current.homeManager;
-        closest.loser = current.awayManager;
-      } else if (current.homeScore < current.awayScore) {
-        closest.winner = current.awayManager;
-        closest.loser = current.homeManager;
-      }
-    }
+const closestMatch = findMatchup(weekData, "closest");
+const biggestBlowout = findMatchup(weekData, "blowout");
+
+console.log(closestMatch)
+console.log(biggestBlowout)
+// const closestMatch = weekData.reduce((closest, current) => {
+//     const difference = Math.abs(current.homeScore - current.awayScore);
+
+//     if (difference < closest.difference) {
+//       closest.difference = difference.toFixed(2);
+//       if (current.homeScore >= current.awayScore) {
+//         closest.winner = current.homeManager;
+//         closest.loser = current.awayManager;
+//       } else if (current.homeScore < current.awayScore) {
+//         closest.winner = current.awayManager;
+//         closest.loser = current.homeManager;
+//       }
+//     }
   
-    return closest;
-  }, {
-    difference: Infinity,
-    winner: '',
-    loser: '',
-  });
-  let closestDifference = closestMatch.difference;
-  let winner = closestMatch.winner;
-  let loser = closestMatch.loser;
+//     return closest;
+//   }, {
+//     difference: Infinity,
+//     winner: '',
+//     loser: '',
+//   });
+//   let closestDifference = closestMatch.difference;
+//   let winner = closestMatch.winner;
+//   let loser = closestMatch.loser;
 
 //Highest Scoring Loser
 let highLoserIndex = -1
@@ -167,12 +173,23 @@ weekData.forEach((item) => {
                             </div>
                             <p>{averageScore} points</p>
                         </div>
-
+                        <div className="stat-card">
+                            <div className="card-title">
+                                <h3>Highest Scoring Bench</h3>
+                            </div>
+                            <p>Coming Soon!</p>
+                        </div>
                         <div className="stat-card">
                             <div className="card-title">
                                 <h3>Closest Game</h3>
                             </div>
-                            <p>{winner} beat {loser} <br />by {closestDifference} points</p>
+                            <p>{closestMatch.winner} beat {closestMatch.loser} <br />by {closestMatch.difference} points</p>
+                        </div>
+                        <div className="stat-card">
+                            <div className="card-title">
+                                <h3>Biggest Blowout</h3>
+                            </div>
+                            <p>{biggestBlowout.winner} beat {biggestBlowout.loser} <br />by {biggestBlowout.difference} points</p>
                         </div>
                         <div className="stat-card">
                             <div className="card-title">
@@ -180,13 +197,13 @@ weekData.forEach((item) => {
                             </div>
                             <p>{highLoserName} lost with {highLoserScore} points, would have beat {(highLoserSalt == combinedItems.length - 2) ? "any other team" : highLoserSalt + (highLoserSalt === 1 ? (" other") : " others")}</p>
                         </div>
-
                         <div className="stat-card">
                             <div className="card-title">
                                 <h3>Lowest Scoring Winner</h3>
                             </div>
                             <p>{lowWinName} won with {lowWinScore} points, would have lost to {(lowWinSalt == combinedItems.length - 2) ? "any other team" : lowWinSalt + (lowWinSalt === 1 ? (" other") : " others")}</p>
                         </div>
+
 
                     </section>
 
@@ -227,7 +244,7 @@ weekData.forEach((item) => {
 function calculateDefaultWeek() {
 
             const currentDate = new Date();
-            const startOfWeek1 = new Date('2024-09-05'); // Thursday of NFL Week one
+            const startOfWeek1 = new Date('2025-09-04'); // Thursday of NFL Week one
             const millisecondsInAWeek = 604800000;
             var weeksSinceStart = Math.floor((currentDate - startOfWeek1) / millisecondsInAWeek);
 
@@ -240,3 +257,31 @@ function calculateDefaultWeek() {
             //return Math.min(Math.max(weeksSinceStart + 1, 1), 17);
             return Math.min(Math.max(weeksSinceStart, 0), 18);
         }
+
+function findMatchup(weekData, type = "closest") {
+  return weekData.reduce((result, current) => {
+    const difference = Math.abs(current.homeScore - current.awayScore);
+
+    const shouldReplace =
+      type === "closest"
+        ? difference < result.difference
+        : difference > result.difference;
+
+    if (shouldReplace) {
+      result.difference = difference.toFixed(2);
+      if (current.homeScore >= current.awayScore) {
+        result.winner = current.homeManager;
+        result.loser = current.awayManager;
+      } else {
+        result.winner = current.awayManager;
+        result.loser = current.homeManager;
+      }
+    }
+
+    return result;
+  }, {
+    difference: type === "closest" ? Infinity : -Infinity,
+    winner: '',
+    loser: '',
+  });
+}
