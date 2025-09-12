@@ -330,6 +330,12 @@ flex-direction: column;
   gap: 20px; /* space between columns */
   justify-items: center;
 }
+
+.infectedChart {
+  justify-content: center;
+  display: flex;
+  flex-direction: row;
+}
 /************************
 *
 *   Desktop/Tablet changes
@@ -398,5 +404,17 @@ flex-direction: column;
     background-color: whitesmoke;
     color: #335425;
     font-weight: bold;
+  }
+  .leagueHome.single-center {
+    display: flex;
+    justify-content: center;
+  }
+  .leagueHome.with-infected {
+    display: flex;
+    justify-content: space-between; /* or space-around / center */
+    gap: 2rem;
+  } 
+  .infectedChart {
+    width: 30vw;
   }
 }
