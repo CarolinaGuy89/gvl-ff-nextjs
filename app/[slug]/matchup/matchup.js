@@ -23,10 +23,10 @@ export default async function BuildMatchups({ slug, weekNum = calculateDefaultWe
         const infectedPlayer = await getInfectedPlayer(weekNum)
         const infectedMatchup = weekData.find(matchup => matchup.homeManager === infectedPlayer || matchup.awayManager === infectedPlayer);
         
-        if (infectedMatchup.homeManager === infectedPlayer) {
-            infectedMatchup.homeManager = infectedMatchup.homeManager + '☣️';
-        } else if (infectedMatchup.awayManager === infectedPlayer) {
-            infectedMatchup.awayManager = infectedMatchup.awayManager + '☣️';
+        for (const side of ["homeManager", "awayManager"]) {
+        if (infectedMatchup[side] === infectedPlayer) {
+            infectedMatchup[side] += "☣️";
+        }
         }
     }
 
@@ -55,32 +55,6 @@ let averageScore = (total / (weekData.length * 2)).toFixed(2);
 //Closest Game
 const closestMatch = findMatchup(weekData, "closest");
 const biggestBlowout = findMatchup(weekData, "blowout");
-
-console.log(closestMatch)
-console.log(biggestBlowout)
-// const closestMatch = weekData.reduce((closest, current) => {
-//     const difference = Math.abs(current.homeScore - current.awayScore);
-
-//     if (difference < closest.difference) {
-//       closest.difference = difference.toFixed(2);
-//       if (current.homeScore >= current.awayScore) {
-//         closest.winner = current.homeManager;
-//         closest.loser = current.awayManager;
-//       } else if (current.homeScore < current.awayScore) {
-//         closest.winner = current.awayManager;
-//         closest.loser = current.homeManager;
-//       }
-//     }
-  
-//     return closest;
-//   }, {
-//     difference: Infinity,
-//     winner: '',
-//     loser: '',
-//   });
-//   let closestDifference = closestMatch.difference;
-//   let winner = closestMatch.winner;
-//   let loser = closestMatch.loser;
 
 //Highest Scoring Loser
 let highLoserIndex = -1
@@ -123,8 +97,6 @@ weekData.forEach((item) => {
             manager: item.awayManager
             };
     }
-
-
     
     // Push the objects into the combined array
     combinedItems.push(homeItem);
@@ -209,29 +181,28 @@ weekData.forEach((item) => {
 
                     <section className='barChart'>
                     <div style={{ width: "100%", height: "75vh" }}>
-                        <ResponsiveContainer width="100%" aspect={1}>
-                    <BarChart
-                        margin={{ top: 5, right: 5, bottom: 5, left: -20 }}
-                        data={weekData}>
-                        <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width / props.xAxis.tickCount} />
-                        <YAxis tick={{ fill: 'white' }} label={{ value: 'Points', fill: 'white', angle: -90, offset: -45, position: "bottom" }} />
-                        <XAxis tick={false} label={{ value: 'Matchups', fill: 'white', offset: -15, position: "bottom" }} />
-                        <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />} />
-                        <Bar dataKey="awayScore" activeBar={<Rectangle fill="teal" stroke="black" />}>
-                            <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
-                            {weekData.map((entry) => (
-                                <Cell key={`${entry}`} fill={entry.barColorAway} />
-                            ))}
-                        </Bar>
-                        <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
-                            <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
-                            {weekData.map((entry) => (
-                                <Cell key={`${entry}`} fill={entry.barColorHome} />
-                            ))}
-                        </Bar>
-
-                    </BarChart>
-                    </ResponsiveContainer>
+                        <ResponsiveContainer key={weekNum} width="100%" aspect={1}>
+                            <BarChart
+                                margin={{ top: 5, right: 5, bottom: 5, left: -20 }}
+                                data={weekData}>
+                                <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width / props.xAxis.tickCount} />
+                                <YAxis tick={{ fill: 'white' }} label={{ value: 'Points', fill: 'white', angle: -90, offset: -45, position: "bottom" }} />
+                                <XAxis tick={false} label={{ value: 'Matchups', fill: 'white', offset: -15, position: "bottom" }} />
+                                <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />} />
+                                <Bar dataKey="awayScore" activeBar={<Rectangle fill="teal" stroke="black" />}>
+                                    <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
+                                    {weekData.map((entry) => (
+                                        <Cell key={`${entry}`} fill={entry.barColorAway} />
+                                    ))}
+                                </Bar>
+                                <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
+                                    <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
+                                    {weekData.map((entry) => (
+                                        <Cell key={`${entry}`} fill={entry.barColorHome} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                     </section>
                     </section>    
