@@ -354,13 +354,13 @@ function getEasternTime() {
   const now = new Date();
 
   //Local Dev time
-  // if (process.env.NODE_ENV === "development") {
-  //   return {
-  //     day: now.getDay(),
-  //     hour: now.getHours(),
-  //     minute: now.getMinutes(),
-  //   };
-  // }
+  if (process.env.NODE_ENV === "development") {
+    return {
+      day: now.getDay(),
+      hour: now.getHours(),
+      minute: now.getMinutes(),
+    };
+  }
 
   // Force to America/New_York timezone
   const formatter = new Intl.DateTimeFormat("en-US", {
@@ -368,11 +368,21 @@ function getEasternTime() {
     hour: "numeric",
     minute: "numeric",
     hour12: false,
-    weekday: "numeric", // Sunday=1, Monday=2, ..., Saturday=7
   });
 
   const parts = formatter.formatToParts(now);
   const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+
+  // Extract hour & minute
+  const hour = parseInt(map.hour, 10);
+  const minute = parseInt(map.minute, 10);
+
+  // Compute weekday separately (UTC day → shift to ET)
+  // Trick: create a "New York" date string, then parse its weekday
+  const nyDate = new Date(
+    now.toLocaleString("en-US", { timeZone: "America/New_York" })
+  );
+  const day = nyDate.getDay(); // Sunday=0, Monday=1, ...
 
   return {
     day: parseInt(map.weekday, 10) % 7, // make Sunday=0 again
