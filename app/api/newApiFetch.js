@@ -354,13 +354,13 @@ function getEasternTime() {
   const now = new Date();
 
   //Local Dev time
-  if (process.env.NODE_ENV === "development") {
-    return {
-      day: now.getDay(),
-      hour: now.getHours(),
-      minute: now.getMinutes(),
-    };
-  }
+  // if (process.env.NODE_ENV === "development") {
+  //   return {
+  //     day: now.getDay(),
+  //     hour: now.getHours(),
+  //     minute: now.getMinutes(),
+  //   };
+  // }
 
   // Force to America/New_York timezone
   const formatter = new Intl.DateTimeFormat("en-US", {
