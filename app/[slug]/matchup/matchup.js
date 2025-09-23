@@ -3,7 +3,7 @@ import { getInfectedPlayer } from '@/app/api/leagueConfig';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
 import React from 'react';
 
-export default async function BuildMatchups({ slug, weekNum = calculateDefaultWeek() }) {
+export default async function BuildMatchups({ slug, weekNum = calculateDefaultWeek(), leagueStandings}) {
     //Default preseason to week 1
     if (weekNum == 0) {
         weekNum = 1;
@@ -44,6 +44,23 @@ export default async function BuildMatchups({ slug, weekNum = calculateDefaultWe
 
         return null;
     };
+
+//Highest Scoring Bench
+let maxBench = 0;
+let maxBenchOwner = 'null';
+
+leagueStandings.forEach(team => {
+    let teamBench = 0;
+    team.roster.forEach(player => {
+        if (player.lineupSlotId === 'Bench') {
+            teamBench += player.actualTotal
+        }
+    });
+    if (teamBench>maxBench) {
+        maxBench = teamBench.toFixed(2)
+        maxBenchOwner = team.owner
+    }
+});
 
 //Weekly Average
 let total = 0;
@@ -126,9 +143,7 @@ weekData.forEach((item) => {
         lowWinSalt = '-'; 
         let closestGameText = 'Week has not started'
       }
-
-});
-
+    });
 
         if (weekData == null) {
             return
@@ -149,7 +164,7 @@ weekData.forEach((item) => {
                             <div className="card-title">
                                 <h3>Highest Scoring Bench</h3>
                             </div>
-                            <p>Coming Soon!</p>
+                            <p>{maxBenchOwner} had a bench score of {maxBench}</p>
                         </div>
                         <div className="stat-card">
                             <div className="card-title">
@@ -175,8 +190,6 @@ weekData.forEach((item) => {
                             </div>
                             <p>{lowWinName} won with {lowWinScore} points, would have lost to {(lowWinSalt == combinedItems.length - 2) ? "any other team" : lowWinSalt + (lowWinSalt === 1 ? (" other") : " others")}</p>
                         </div>
-
-
                     </section>
 
                     <section className='barChart'>
