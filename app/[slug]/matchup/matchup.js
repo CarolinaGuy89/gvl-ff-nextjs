@@ -3,7 +3,7 @@ import { getInfectedPlayer } from '@/app/api/leagueConfig';
 import { BarChart, Bar, XAxis, Rectangle, YAxis, Tooltip, CartesianGrid, Cell, LabelList, ResponsiveContainer } from 'recharts';
 import React from 'react';
 
-export default async function BuildMatchups({ slug, weekNum = calculateDefaultWeek() }) {
+export default async function BuildMatchups({ slug, weekNum = calculateDefaultWeek(), leagueStandings}) {
     //Default preseason to week 1
     if (weekNum == 0) {
         weekNum = 1;
@@ -23,10 +23,10 @@ export default async function BuildMatchups({ slug, weekNum = calculateDefaultWe
         const infectedPlayer = await getInfectedPlayer(weekNum)
         const infectedMatchup = weekData.find(matchup => matchup.homeManager === infectedPlayer || matchup.awayManager === infectedPlayer);
         
-        if (infectedMatchup.homeManager === infectedPlayer) {
-            infectedMatchup.homeManager = infectedMatchup.homeManager + '☣️';
-        } else if (infectedMatchup.awayManager === infectedPlayer) {
-            infectedMatchup.awayManager = infectedMatchup.awayManager + '☣️';
+        for (const side of ["homeManager", "awayManager"]) {
+        if (infectedMatchup[side] === infectedPlayer) {
+            infectedMatchup[side] += "☣️";
+        }
         }
     }
 
@@ -45,6 +45,23 @@ export default async function BuildMatchups({ slug, weekNum = calculateDefaultWe
         return null;
     };
 
+//Highest Scoring Bench
+let maxBench = 0;
+let maxBenchOwner = 'null';
+
+leagueStandings.forEach(team => {
+    let teamBench = 0;
+    team.roster.forEach(player => {
+        if (player.lineupSlotId === 'Bench') {
+            teamBench += player.actualTotal
+        }
+    });
+    if (teamBench>maxBench) {
+        maxBench = teamBench.toFixed(2)
+        maxBenchOwner = team.owner
+    }
+});
+
 //Weekly Average
 let total = 0;
 weekData.forEach(element => {
@@ -55,32 +72,6 @@ let averageScore = (total / (weekData.length * 2)).toFixed(2);
 //Closest Game
 const closestMatch = findMatchup(weekData, "closest");
 const biggestBlowout = findMatchup(weekData, "blowout");
-
-console.log(closestMatch)
-console.log(biggestBlowout)
-// const closestMatch = weekData.reduce((closest, current) => {
-//     const difference = Math.abs(current.homeScore - current.awayScore);
-
-//     if (difference < closest.difference) {
-//       closest.difference = difference.toFixed(2);
-//       if (current.homeScore >= current.awayScore) {
-//         closest.winner = current.homeManager;
-//         closest.loser = current.awayManager;
-//       } else if (current.homeScore < current.awayScore) {
-//         closest.winner = current.awayManager;
-//         closest.loser = current.homeManager;
-//       }
-//     }
-  
-//     return closest;
-//   }, {
-//     difference: Infinity,
-//     winner: '',
-//     loser: '',
-//   });
-//   let closestDifference = closestMatch.difference;
-//   let winner = closestMatch.winner;
-//   let loser = closestMatch.loser;
 
 //Highest Scoring Loser
 let highLoserIndex = -1
@@ -123,8 +114,6 @@ weekData.forEach((item) => {
             manager: item.awayManager
             };
     }
-
-
     
     // Push the objects into the combined array
     combinedItems.push(homeItem);
@@ -154,9 +143,7 @@ weekData.forEach((item) => {
         lowWinSalt = '-'; 
         let closestGameText = 'Week has not started'
       }
-
-});
-
+    });
 
         if (weekData == null) {
             return
@@ -177,7 +164,7 @@ weekData.forEach((item) => {
                             <div className="card-title">
                                 <h3>Highest Scoring Bench</h3>
                             </div>
-                            <p>Coming Soon!</p>
+                            <p>{maxBenchOwner} had a bench score of {maxBench}</p>
                         </div>
                         <div className="stat-card">
                             <div className="card-title">
@@ -203,35 +190,32 @@ weekData.forEach((item) => {
                             </div>
                             <p>{lowWinName} won with {lowWinScore} points, would have lost to {(lowWinSalt == combinedItems.length - 2) ? "any other team" : lowWinSalt + (lowWinSalt === 1 ? (" other") : " others")}</p>
                         </div>
-
-
                     </section>
 
                     <section className='barChart'>
                     <div style={{ width: "100%", height: "75vh" }}>
-                        <ResponsiveContainer width="100%" aspect={1}>
-                    <BarChart
-                        margin={{ top: 5, right: 5, bottom: 5, left: -20 }}
-                        data={weekData}>
-                        <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width / props.xAxis.tickCount} />
-                        <YAxis tick={{ fill: 'white' }} label={{ value: 'Points', fill: 'white', angle: -90, offset: -45, position: "bottom" }} />
-                        <XAxis tick={false} label={{ value: 'Matchups', fill: 'white', offset: -15, position: "bottom" }} />
-                        <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />} />
-                        <Bar dataKey="awayScore" activeBar={<Rectangle fill="teal" stroke="black" />}>
-                            <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
-                            {weekData.map((entry) => (
-                                <Cell key={`${entry}`} fill={entry.barColorAway} />
-                            ))}
-                        </Bar>
-                        <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
-                            <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
-                            {weekData.map((entry) => (
-                                <Cell key={`${entry}`} fill={entry.barColorHome} />
-                            ))}
-                        </Bar>
-
-                    </BarChart>
-                    </ResponsiveContainer>
+                        <ResponsiveContainer key={weekNum} width="100%" aspect={1}>
+                            <BarChart
+                                margin={{ top: 5, right: 5, bottom: 5, left: -20 }}
+                                data={weekData}>
+                                <CartesianGrid strokeDasharray="4 4" verticalCoordinatesGenerator={(props) => props.width / props.xAxis.tickCount} />
+                                <YAxis tick={{ fill: 'white' }} label={{ value: 'Points', fill: 'white', angle: -90, offset: -45, position: "bottom" }} />
+                                <XAxis tick={false} label={{ value: 'Matchups', fill: 'white', offset: -15, position: "bottom" }} />
+                                <Tooltip cursor={{ stroke: 'White', strokeWidth: 2 }} content={<CustomTooltip />} />
+                                <Bar dataKey="awayScore" activeBar={<Rectangle fill="teal" stroke="black" />}>
+                                    <LabelList dataKey="awayManager" position="center" angle="-90" fill='white'></LabelList>
+                                    {weekData.map((entry) => (
+                                        <Cell key={`${entry}`} fill={entry.barColorAway} />
+                                    ))}
+                                </Bar>
+                                <Bar dataKey="homeScore" activeBar={<Rectangle fill="goldenrod" stroke="black" />}>
+                                    <LabelList dataKey="homeManager" position="center" angle="-90" fill='white'></LabelList>
+                                    {weekData.map((entry) => (
+                                        <Cell key={`${entry}`} fill={entry.barColorHome} />
+                                    ))}
+                                </Bar>
+                            </BarChart>
+                        </ResponsiveContainer>
                     </div>
                     </section>
                     </section>    

@@ -7,9 +7,10 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import DropdownButton from 'react-bootstrap/DropdownButton';
 import { ButtonGroup, Button } from "react-bootstrap";
 import calculateDefaultWeek from "@/app/api/calcCurrentWeek";
+import { useLeague } from "@/app/context/LeagueContext";
 
 export default function Home({ params }) {
-
+  const { leagueStandings } = useLeague();
   let currWeek = calculateDefaultWeek()
 
   const [selectedWeek, setSelectedWeek] = useState(currWeek);
@@ -63,7 +64,7 @@ export default function Home({ params }) {
 
       <section className="chartMatchup">
         <Suspense fallback={<h2 className="chartTitle">Evaluating the Playbook...</h2>}>
-          <BuildMatchups slug={params.slug} weekNum={selectedWeek}/>
+          <BuildMatchups slug={params.slug} weekNum={selectedWeek} leagueStandings={leagueStandings}/>
         </Suspense>
       </section>
     </main>

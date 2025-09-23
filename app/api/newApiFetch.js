@@ -26,10 +26,11 @@ export default async function getLeagueStandings(leagueId) {
   }
 
   let URL = "https://lm-api-reads.fantasy.espn.com/apis/v3/games/ffl/seasons/" + currentYear + "/segments/0/leagues/" + leagueId + "?scoringPeriodId=" + weekNum + "&view=mRoster&view=mTeam"
-  //fetch data, caching it.
-  rawData = await fetch(URL, { cache: 'no-store' }).then((res) =>
-    res.json()
-  )
+
+  rawData = await fetchLeagueData(URL);
+  // rawData = await fetch(URL, { cache: 'no-store' }).then((res) =>
+  //   res.json()
+  // )
 
   const leagueSettings = await getLeagueSettings(leagueId);
 
@@ -298,11 +299,84 @@ export async function getBoxScores(leagueId, weekNum) {
       // If not, create an empty array for that key
       acc[m.matchupPeriodId] = [];
     }
-    // Push the current item into the appropriate array
+    // Push the current item into the appropriate arrayview=mMatchupScore
     acc[m.matchupPeriodId].push(m);
 
     return acc
   }, [])
 
   return schedule;
+}
+
+async function fetchLeagueData(URL) {
+  let options;
+
+  if (shouldBypassCache()) {
+    // during game times, fetch live data
+    options = {
+      cache: "no-store",
+      next: { revalidate: 0 }
+    }
+  } else {
+    // During non-Games times, 10 minutes Cache
+    options = {
+      next: { revalidate: 600 }
+    };
+  }
+
+  const res = await fetch(URL, options);
+  return res.json();
+}
+
+function shouldBypassCache() {
+  const { day, hour, minute } = getEasternTime();
+
+  function between(startHour, startMin, endHour, endMin) {
+    const current = hour * 60 + minute;
+    const start = startHour * 60 + startMin;
+    const end = endHour * 60 + endMin;
+    return current >= start && current <= end;
+  }
+
+  // Sunday: 1:00 PM – 11:30 PM ET
+  if (day === 0 && between(13, 0, 23, 30)) return true;
+
+  // Monday Night: 8:15 PM – 11:30 PM ET
+  if (day === 1 && between(20, 15, 23, 30)) return true;
+
+  // Thursday Night: 8:15 PM – 11:30 PM ET
+  if (day === 4 && between(20, 15, 23, 30)) return true;
+
+  return false;
+}
+
+function getEasternTime() {
+  const now = new Date();
+
+  //Local Dev time
+  if (process.env.NODE_ENV === "development") {
+    return {
+      day: now.getDay(),
+      hour: now.getHours(),
+      minute: now.getMinutes(),
+    };
+  }
+
+  // Force to America/New_York timezone
+  const formatter = new Intl.DateTimeFormat("en-US", {
+    timeZone: "America/New_York",
+    hour: "numeric",
+    minute: "numeric",
+    hour12: false,
+    weekday: "numeric", // Sunday=1, Monday=2, ..., Saturday=7
+  });
+
+  const parts = formatter.formatToParts(now);
+  const map = Object.fromEntries(parts.map(p => [p.type, p.value]));
+
+  return {
+    day: parseInt(map.weekday, 10) % 7, // make Sunday=0 again
+    hour: parseInt(map.hour, 10),
+    minute: parseInt(map.minute, 10),
+  };
 }
