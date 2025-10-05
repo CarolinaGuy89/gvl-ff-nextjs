@@ -73,7 +73,7 @@ if (displayOption == 0) {
 
         return (
           <div key={teamId} className={teamId} style={{ marginLeft: "1vw", marginRight: "1vw"}}>
-            <h2 style={{ marginLeft: "2vw"}}>{ownerName}'s drafted roster</h2>
+            <h2 style={{ marginLeft: "2vw"}}>{ownerName}&apos;s drafted roster</h2>
             <table>
               <thead>
                 <tr>
@@ -117,7 +117,7 @@ if (displayOption == 0) {
 <div style={{ marginLeft: "1vw", marginRight: "1vw"}}>
       {leagueStandings.map((team, idx) => (
         <div key={idx} >
-          <h2 style={{ marginLeft: "2vw"}}>{team.owner}'s current roster</h2>
+          <h2 style={{ marginLeft: "2vw"}}>{team.owner}&apos;s current roster</h2>
           <table>
             <thead>
               <tr>
