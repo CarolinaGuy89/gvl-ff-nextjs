@@ -1,6 +1,6 @@
 import { ownersByLeague } from '@/app/components/constants';
 
-export default async function BuildDraftTables({ slug, leagueStandings }) {
+export default async function BuildDraftTables({ slug, leagueStandings, displayOption }) {
   const files = {
     family: () => import("../../components/draftData/family_2025.json"),
     gvl: () => import("../../components/draftData/gvl_2025.json"),
@@ -15,10 +15,10 @@ export default async function BuildDraftTables({ slug, leagueStandings }) {
   const owners = ownersByLeague[slug] || [];
 
   const dataFiles = await files[slug]();
-  const data = dataFiles.default;
+  let draftedTeams = dataFiles.default;
 
   // Group by teamId
-  const grouped = data.reduce((acc, player) => {
+  draftedTeams = draftedTeams.reduce((acc, player) => {
     if (!acc[player.teamId]) {
       acc[player.teamId] = [];
     }
@@ -27,52 +27,53 @@ export default async function BuildDraftTables({ slug, leagueStandings }) {
   }, {});
 
   // Sort each team’s players
-  for (const teamId in grouped) {
-    grouped[teamId].sort((a, b) => a.roundNumber - b.roundNumber);
+  for (const teamId in draftedTeams) {
+    draftedTeams[teamId].sort((a, b) => a.roundNumber - b.roundNumber);
   }
 
+let tableHeaders = []
 
-// Enhance grouped players with owner info
-// Enhance grouped players with current owner info
-for (const teamId in grouped) {
-  grouped[teamId] = grouped[teamId].map(player => {
-    // Find which team currently owns this player
-    const owningTeam = leagueStandings.find(team =>
-      team.roster.some(r => r.playerId === player.id)
-    );
-
-    if (owningTeam) {
-      return { ...player, owner: owningTeam.owner };
-    } else {
-      return { ...player, owner: "Free Agent" };
-    }
-
-    return player; // keep original if not currently owned
+if (displayOption == 0) {
+  // Build a quick lookup of playerId -> owner name
+  const playerOwnerMap = {};
+  leagueStandings.forEach(team => {
+    team.roster.forEach(player => {
+      playerOwnerMap[player.playerId] = team.owner;
+    });
   });
-}
 
-  const tableHeaders = ["Draft Round", "Draft Pick", "Position", "Current Owner"];
+  // Update draftedTeams with ownership info
+  for (const teamId in draftedTeams) {
+    draftedTeams[teamId] = draftedTeams[teamId].map(player => {
+      const owner = playerOwnerMap[player.id] || "Free Agent";
+      return { ...player, owner };
+    });
+  }
 
+  tableHeaders = ["Draft Round", "Draft Pick", "Position", "Current Owner"];
 
+  // Helper to resolve display owner name
+  const getOwnerName = (teamId, slug, owners) => {
+    let ownerIndex = Number(teamId) - 1;
+    if (slug === "hockey" && ownerIndex >= 7) {
+      ownerIndex += 1; // special rule
+    }
+    return owners[ownerIndex] || `Team ${teamId}`;
+  };
 
   return (
     <div>
-      {Object.entries(grouped).map(([teamId, players]) => {
+      {Object.entries(draftedTeams).map(([teamId, players]) => {
         const rows = players.map((t) => ({
           ...t,
           rowData: [t.roundNumber, t.fullName, t.defaultPosition, t.owner],
         }));
         
-        let ownerIndex = Number(teamId) - 1;
-        if (slug === "hockey" && ownerIndex >= 7) {
-            // skip team slot #8 (special rule)
-            ownerIndex += 1;
-        }
-        const ownerName = owners[ownerIndex] || `Team ${teamId}`;
+        const ownerName = getOwnerName(teamId, slug, owners);
 
         return (
-          <div key={teamId} className={teamId}>
-            <h2>{ownerName}</h2>
+          <div key={teamId} className={teamId} style={{ marginLeft: "1vw", marginRight: "1vw"}}>
+            <h2 style={{ marginLeft: "2vw"}}>{ownerName}'s drafted roster</h2>
             <table>
               <thead>
                 <tr>
@@ -96,4 +97,57 @@ for (const teamId in grouped) {
       })}
     </div>
   );
+} else if (displayOption == 1) {  
+  leagueStandings.forEach(team => {
+    team.roster = team.roster.map(player => {
+      // drafted players for this team, keyed by teamId
+      const draftedList = draftedTeams[team.id] || [];
+
+      // try to find this player in drafted list
+      const draftedInfo = draftedList.find(d => d.id === player.playerId);
+
+      return {
+        ...player,
+        draftedRound: draftedInfo ? draftedInfo.roundNumber : "not eligible"
+      };
+    });
+  });
+  leagueStandings.sort((a, b) => a.id - b.id);
+    return (
+<div style={{ marginLeft: "1vw", marginRight: "1vw"}}>
+      {leagueStandings.map((team, idx) => (
+        <div key={idx} >
+          <h2 style={{ marginLeft: "2vw"}}>{team.owner}'s current roster</h2>
+          <table>
+            <thead>
+              <tr>
+                <th>Slot</th>
+                <th>Player</th>
+                <th>Position - Rank</th>
+                <th>Keeper Round</th>
+              </tr>
+            </thead>
+            <tbody>
+              {team.roster.map((t, i) => (
+                <tr key={i}>
+                  <td>{t.lineupSlotId}</td>
+                  <td>{t.fullName}</td>
+                  <td>{t.defaultPosition} - {t.positionalRanking}</td>
+                  <td>{t.draftedRound}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+    </div>
+  );
+} else {
+  
+}
+  
+
+
+
+
 }

@@ -18,10 +18,10 @@ export default function MenuButton(params) {
           </Offcanvas.Header>
           <Offcanvas.Body>
             <Nav defaultActiveKey="/home" className="menuOverlay">
-              <Nav.Link href={`/${params.slug[0]}/home`}>Home</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/home`}>League Standings</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/matchup`}>Weekly Summary</Nav.Link>
               <Nav.Link href={`/${params.slug[0]}/team`}>Team Overview</Nav.Link>
-              <Nav.Link href={`/${params.slug[0]}/draft`}>Draft Results</Nav.Link>
+              <Nav.Link href={`/${params.slug[0]}/draft`}>Draft & Keepers</Nav.Link>
               {/* <Nav.Link href={`/${params.slug[0]}/rules`} disabled>House Rules (Coming eventually!)</Nav.Link> */}
               <Nav.Link href="/">Change League</Nav.Link>
             </Nav>

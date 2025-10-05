@@ -336,6 +336,21 @@ flex-direction: column;
   display: flex;
   flex-direction: row;
 }
+
+  .desktop-button-bar {
+    padding: 1rem;
+  }
+
+  .desktop-button-bar .btn-secondary {
+    background-color: #335425;
+    color: whitesmoke;
+  }
+
+  .desktop-button-bar .btn-primary {
+    background-color: whitesmoke;
+    color: #335425;
+    font-weight: bold;
+  }
 /************************
 *
 *   Desktop/Tablet changes

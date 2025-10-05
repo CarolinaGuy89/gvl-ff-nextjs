@@ -174,13 +174,25 @@ function parseRoster(teams, weekNum) {
           maxTotal = projectedTotal
         }
 
+      //compute eligibleSlots
+      const eligibleSlots = p.playerPoolEntry.player.eligibleSlots.map(
+        position => slotCategoryIdToPositionMap[position]
+      );
+
+      //defaultPosition
+      let defaultPosition;
+      if (eligibleSlots[0] === "WR/TE") {
+        defaultPosition = "TE";
+      } else if (eligibleSlots[0] === "Rookie") {
+        defaultPosition = eligibleSlots[1];
+      } else {
+        defaultPosition = eligibleSlots[0];
+      }
+
       return {
       //newName: oldLocation.oldName
       lineupSlotId: slotCategoryIdToPositionMap[p.lineupSlotId],
       playerId: p.playerId,
-      eligibleSlots: p.playerPoolEntry.player.eligibleSlots.map(
-        position => slotCategoryIdToPositionMap[position]
-      ),
       playerId: p.playerPoolEntry.player.id,
       firstName: p.playerPoolEntry.player.firstName,
       fullName: p.playerPoolEntry.player.fullName,
@@ -195,6 +207,9 @@ function parseRoster(teams, weekNum) {
       pointDelta: pointDelta,
       maxTotal: parseFloat(maxTotal.toFixed(2)),
       lineupLocked: p.playerPoolEntry.lineupLocked,
+      positionalRanking: p.playerPoolEntry.ratings[0].positionalRanking,
+      eligibleSlots,
+      defaultPosition
     };
     }) // You have to rename it separately in nested objects
     .sort((a, b) => positionOrder.indexOf(a.lineupSlotId) - positionOrder.indexOf(b.lineupSlotId)); // Sorting lineupSlotId

@@ -148,7 +148,6 @@ weekData.forEach((item) => {
         if (weekData == null) {
             return
         } else {
-            //console.log(weekData)
             return (
                 <section>
                     <h2 className="chartTitle">{`Week ${weekNum} Matchups`}</h2>
@@ -164,7 +163,7 @@ weekData.forEach((item) => {
                             <div className="card-title">
                                 <h3>Highest Scoring Bench</h3>
                             </div>
-                            <p>{maxBenchOwner} had a bench score of {maxBench}</p>
+                            <p>{(maxBenchOwner == 'null') ? "-" : maxBenchOwner} had a bench score of {maxBench}</p>
                         </div>
                         <div className="stat-card">
                             <div className="card-title">
