@@ -98,17 +98,41 @@ if (displayOption == 0) {
     </div>
   );
 } else if (displayOption == 1) {  
-  leagueStandings.forEach(team => {
-    team.roster = team.roster.map(player => {
-      // drafted players for this team, keyed by teamId
-      const draftedList = draftedTeams[team.id] || [];
 
-      // try to find this player in drafted list
-      const draftedInfo = draftedList.find(d => d.id === player.playerId);
+  const allDraftedPlayers = Object.entries(draftedTeams).flatMap(([teamId, players]) =>
+  players.map(p => ({
+    ...p,
+    draftedTeamId: teamId
+  }))
+);
 
-      return {
-        ...player,
-        draftedRound: draftedInfo ? draftedInfo.roundNumber : "not eligible"
+leagueStandings.forEach(team => {
+  team.roster = team.roster.map(player => {
+    // Find if this player was drafted by anyone
+    const draftedInfo = allDraftedPlayers.find(d => d.id === player.playerId);
+
+    // Default values
+    let draftedRound = "not eligible";
+    let draftedBy = null;
+
+    if (draftedInfo) {
+      draftedRound = draftedInfo.roundNumber;
+
+      // Find who drafted them (owner name)
+      const draftedTeam = leagueStandings.find(t => t.id == draftedInfo.draftedTeamId);
+      const draftOwner = draftedTeam ? draftedTeam.owner : "Unknown";
+
+      // Only include draftedBy if current owner is *different*
+      if (draftOwner !== team.owner) {
+        draftedBy = draftOwner;
+        draftedRound = draftedRound + " (" + draftOwner + ")"
+      }
+    }
+
+    return {
+      ...player,
+      draftedRound,
+      draftedBy
       };
     });
   });
